@@ -1,0 +1,25 @@
+<% include partials/head %>
+
+<body>
+<div class="wrapper">
+    <h2>Login :</h2>
+    <form action="/login" method="post" id="login" class="login">
+        <div class="field-wrap">
+            <input class="name" type="text" name="name" value="" placeholder="Name"/>
+        </div>
+        <div class="field-wrap">
+            <input class="email" type="email" name="email" value="" placeholder="Email"/>
+        </div>
+        <div class="field-wrap">
+            <input class="password" type="password" name="password" value="" placeholder="Password"/>
+        </div>
+        <button id="submitBtn" class="login-btn login-submit-btn disable" type="submit">Login</button>
+    </form>
+
+    <span> Don't have an account?<a href="/signup"> Signup</a></span>
+</div>
+
+<script src="/javascripts/login.js"></script>
+</body>
+</html>
+
