@@ -72,7 +72,7 @@ app.use(function(err, req, res, next) {
   });
 });
 
-app.use('/static', express.static(path.join(__dirname, 'public')))
+app.use('/static', express.static(path.join(__dirname, 'public/javascripts/firebaseDB')));
 app.listen(port);
 module.exports = app;
 

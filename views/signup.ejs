@@ -1,20 +1,21 @@
 <% include partials/head %>
 
-<body>
-
 <div class="wrapper">
-    <h2>Sign Up :</h2>
-    <form type="post" action="/signup" id="register" class="register">
-        <input type="text" name="name" value="" placeholder="Name"/>
-        <input type="email" name="email" value="" placeholder="Email"/>
-        <input type="number" name="mobile" value="" placeholder="Mobile Number"/>
-        <input type="password" name="password" value="" placeholder="Password"/>
-        <input class="register-submit-btn" type="submit" value="Register" placeholder="Register"/>
+    <h2>Sign Up :-</h2>
+    <form type="post" action="/signup" id="form" class="register">
+        <div class="field-wrap">
+            <input class="name" type="text" name="name" value="" placeholder="Name"/>
+        </div>
+        <div class="field-wrap">
+            <input class="email" type="email" name="email" value="" placeholder="Email"/>
+        </div>
+        <div class="field-wrap">
+            <input class="password" type="password" name="password" value="" placeholder="Password"/>
+        </div>
+        <button id="submitBtn" class="login-btn login-submit-btn disable" type="submit">Sign Up</button>
     </form>
 
     <span class="fa fa-sign-in"> Already have an account?<a href="/login"> Login</a></span>
 </div>
 
-<script src="/javascripts/index.js" ></script>
-</body>
-</html>
+<% include partials/bottom %>

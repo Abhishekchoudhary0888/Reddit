@@ -1,10 +1,11 @@
-(function () {
+// var x =  require("firebaseDB.js");
 
+(function () {
     'use strict'
 
     class Validation {
         constructor() {
-            this.elLoginForm = document.querySelector('#login');
+            this.elLoginForm = document.querySelector('#form');
             this.elInputs = this.elLoginForm.querySelectorAll('input');
             this.elSubmitBtn = document.querySelector('#submitBtn');
 
@@ -13,11 +14,6 @@
             this.passwordValidationFlag = false;
 
             this.attachEvent();
-
-            return {
-                requestSubmitFn: this.requestSubmitFn
-            }
-
         }
 
         attachEvent() {
@@ -105,25 +101,29 @@
         }
 
         formValidationFn(event) {
+            if (event) {
+                event.preventDefault();
+            }
+
             if (this.nameValidationFlag && this.emailValidationFlag && this.passwordValidationFlag) {
                 this.elSubmitBtn.classList.remove('disable');
-                // this.requestSubmitFn();
+
+                this.requestSubmitFn();
             } else {
-                if (event) {
-                    event.preventDefault();
-                }
                 this.elSubmitBtn.classList.add('disable');
             }
         }
 
         requestSubmitFn() {
-            return true;
+            this.elSubmitBtn.addEventListener('click', function (e) {
+                window.location.href="/home";
+            });
         }
     }
 
     var validation = new Validation();
 
-    module.exports = {
-        chkFn : validation.requestSubmitFn
-    };
+    // module.exports = {
+    //     chkFn : validation.requestSubmitFn
+    // };
 }());

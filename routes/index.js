@@ -1,6 +1,5 @@
 var express = require('express');
 var passport = require('passport');
-var myIndex = require('../public/javascripts/login.js');
 var router = express.Router();
 
 router.get('/', function(req, res, next) {
@@ -8,12 +7,17 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/login', function(req, res, next) {
-  res.render('login.ejs', { message: req.flash('loginMessage') });
+  res.render('login.ejs');
 });
 
 router.get('/signup', function(req, res) {
-  res.render('signup.ejs', { message: req.flash('signupMessage') });
+  res.render('signup.ejs');
 });
+
+router.get('/home', function(req, res) {
+  res.render('home.ejs');
+});
+
 
 // router.get('/logout', function(req, res) {
 //   req.logout();
@@ -27,12 +31,12 @@ router.get('/signup', function(req, res) {
 //   failureFlash: true,
 // }));
 
-router.post('/login', function(req, res) {
-  console.log('insideeeeee');
-  if(myIndex.chkFn()){
-    res.redirect("/");
-  }
-});
+// router.post('/login', function(req, res) {
+//   console.log('insideeeeee');
+//   if(myIndex.chkFn()){
+//     res.redirect("/inde");
+//   }
+// });
 
 module.exports = router;
 
