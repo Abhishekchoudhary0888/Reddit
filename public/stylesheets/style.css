@@ -70,11 +70,13 @@ input.error{
   cursor: pointer;
   color: #fff;
   background: #228b22;
+  outline: none;
 }
 
 .disable{
   color: #333;
   background: #eee;
+  cursor: default;
 }
 
 .login-btn:hover, .register-btn:hover{

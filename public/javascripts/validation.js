@@ -1,4 +1,6 @@
-// var x =  require("firebaseDB.js");
+ require(["javascripts/firebaseDB.js"], function(fireDb){
+     console.log(fireDb);
+ });
 
 (function () {
     'use strict'
