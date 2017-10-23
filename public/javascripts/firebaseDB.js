@@ -8,10 +8,10 @@ var config = {
     storageBucket: "login-7617e.appspot.com",
     messagingSenderId: "870821907151"
 };
-firebase.initializeApp(config);
-
-var database = firebase.database();
-var loginRef= database.ref('loginDetails');
+// firebase.initializeApp(config);
+//
+// var database = firebase.database();
+//var loginRef= database.ref('loginDetails');
 
 //
 // var data = {
@@ -35,6 +35,6 @@ var loginRef= database.ref('loginDetails');
 
 define(function(){
     return {
-        loginRef : loginRef
+        config : config
     };
 });

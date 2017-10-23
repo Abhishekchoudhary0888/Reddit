@@ -1,4 +1,4 @@
-require(["javascripts/firebaseDB.js"], function (dbObj) {
+require(["javascripts/firebaseDB.js"], function (config) {
 
     (function () {
         'use strict'
@@ -114,7 +114,11 @@ require(["javascripts/firebaseDB.js"], function (dbObj) {
                         password: this.elLoginForm.querySelector('input[name="password"]').value,
                     };
 
-                    dbObj.push(formData);
+                    firebase.initializeApp(config.config);
+
+                    var database = firebase.database();
+                    var loginRef= database.ref('loginDetails');
+                    loginRef.push(formData);
 
                     this.requestSubmitFn();
                 } else {
