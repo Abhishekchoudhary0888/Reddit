@@ -5,8 +5,8 @@ require(["javascripts/firebaseDB.js"], function (config) {
 
         class Validation {
             constructor() {
-                this.elLoginForm = document.querySelector('#form');
-                this.elInputs = this.elLoginForm.querySelectorAll('input');
+                this.elForm = document.querySelector('#form');
+                this.elInputs = this.elForm.querySelectorAll('input');
                 this.elSubmitBtn = document.querySelector('#submitBtn');
 
                 this.nameValidationFlag = false;
@@ -109,26 +109,73 @@ require(["javascripts/firebaseDB.js"], function (config) {
                     this.elSubmitBtn.classList.remove('disable');
 
                     var formData = {
-                        name: this.elLoginForm.querySelector('input[name="name"]').value,
-                        email: this.elLoginForm.querySelector('input[name="email"]').value,
-                        password: this.elLoginForm.querySelector('input[name="password"]').value,
+                        name: this.elForm.querySelector('input[name="name"]').value,
+                        email: this.elForm.querySelector('input[name="email"]').value,
+                        password: this.elForm.querySelector('input[name="password"]').value,
                     };
 
-                    firebase.initializeApp(config.config);
+                    this.checkForm(formData);
 
-                    var database = firebase.database();
-                    var loginRef= database.ref('loginDetails');
-                    loginRef.push(formData);
-
-                    this.requestSubmitFn();
                 } else {
                     this.elSubmitBtn.classList.add('disable');
                 }
             }
 
-            requestSubmitFn() {
+            checkForm(formData) {
+                if (this.elSubmitBtn.classList.contains('login-btn')) {
+                    this.requestLoginFormFn(formData);
+                } else if (this.elSubmitBtn.classList.contains('register-btn')) {
+                    this.requestSignupFormFn(formData);
+                }
+            }
+
+            requestLoginFormFn(formData) {
+
+                var status= false,
+                    that= this;
+
+
                 this.elSubmitBtn.addEventListener('click', function (e) {
-                    window.location.href = "/home";
+                    this.innerHTML = 'Login, please wait...';
+                    firebase.initializeApp(config.config);
+                    var database = firebase.database();
+                    var loginRef = database.ref('loginDetails');
+
+
+                    loginRef.on('value', function(obj){
+
+                        var content = obj.val();
+                        var keys = Object.keys(content);
+
+                        for(var i=0; i< keys.length; i++){
+                            var  k = content[keys[i]];
+                            if(k.name == formData.name && k.email == formData.email && k.password == formData.password){
+                                status= true;
+                                window.location.href = "/home";
+                            }
+                        }
+
+                        if(!status){
+                            that.elForm.reset();
+                            that.elSubmitBtn.innerHTML = 'Login';
+                            that.elSubmitBtn.classList.add('disable');
+                            alert('No record found, kindly signup first !!');
+                        }
+                    });
+                });
+            }
+
+            requestSignupFormFn(formData) {
+                this.elSubmitBtn.addEventListener('click', function (e) {
+
+                    this.innerHTML = 'Registering, please wait...';
+                    firebase.initializeApp(config.config);
+                    var database = firebase.database();
+                    var loginRef = database.ref('loginDetails');
+
+                    loginRef.push(formData, function () {
+                        window.location.href = "/home";
+                    });
                 });
             }
         }
