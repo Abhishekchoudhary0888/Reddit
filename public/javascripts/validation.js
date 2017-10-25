@@ -100,6 +100,14 @@ require(["javascripts/firebaseDB.js"], function (config) {
                 }
             }
 
+            resetForm(){
+                this.elSubmitBtn.innerHTML = 'Login';
+                this.elSubmitBtn.classList.add('disable');
+                this.nameValidationFlag = false;
+                this.emailValidationFlag = false;
+                this.passwordValidationFlag = false;
+            }
+
             formValidationFn(event) {
                 if (event) {
                     event.preventDefault();
@@ -137,7 +145,11 @@ require(["javascripts/firebaseDB.js"], function (config) {
 
                 this.elSubmitBtn.addEventListener('click', function (e) {
                     this.innerHTML = 'Login, please wait...';
-                    firebase.initializeApp(config.config);
+
+                    if (!firebase.apps.length) {
+                        firebase.initializeApp(config.config);
+                    }
+
                     var database = firebase.database();
                     var loginRef = database.ref('loginDetails');
 
@@ -157,8 +169,7 @@ require(["javascripts/firebaseDB.js"], function (config) {
 
                         if(!status){
                             that.elForm.reset();
-                            that.elSubmitBtn.innerHTML = 'Login';
-                            that.elSubmitBtn.classList.add('disable');
+                            that.resetForm();
                             alert('No record found, kindly signup first !!');
                         }
                     });
@@ -181,10 +192,6 @@ require(["javascripts/firebaseDB.js"], function (config) {
         }
 
         var validation = new Validation();
-
-        // module.exports = {
-        //     chkFn : validation.requestSubmitFn
-        // };
     }());
 
 });
