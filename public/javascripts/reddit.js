@@ -79,22 +79,18 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 }
 
                 var database = firebase.database();
-                // var postUnitDetailsRef = database.ref('PostUnitDetails');
-                //
-                //
-                // postUnitDetailsRef.push(this.obj, function () {
-                //     this.obj = {};
+                database.ref('Post/' + this.targetId).set(
+                    {
+                        title: this.obj.title,
+                        description: this.obj.description,
+                        id: this.targetId
+                    }, function () {
+                        this.obj = {};
+                    });
+
+                // database.ref('Post/' + 3435).update({
+                //     countasd: '3s'
                 // });
-
-                // database.ref('Post/' + 3435).set(
-                // {title: "ss", description: " ssss", id: 1509012477229}, function () {
-                //     this.obj = {};
-                // });
-
-                //To update
-                // database.ref('Post/' + 3435).update({ title: "New trainer" });
-
-
             }
 
             postBtnClickListener() {
