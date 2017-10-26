@@ -77,29 +77,47 @@
     width: 100%;
     border: 1px solid #e1e1e1;
     padding: 20px;
+    color: #333;
     margin: 50px 0 30px 0;
+    background: #e2e2e2;
 }
 
 .main-section .unit{
     width: 100%;
     margin: 0 0 20px 0;
+    display: flex;
+    justify-content: left;
+    background: #eee;
 }
 
 .main-section .vote-block{
     width: 30px;
     text-align: center;
+    padding-top: 10px;
 }
 .main-section .vote-block span{
     display: block;
     padding: 3px 0;
     font-size: 14px;
     color: #333;
+    position: relative;
 }
 
 .main-section .vote-block span.upvote{
     color: forestgreen;
     cursor: pointer;
     font-size: 20px;
+}
+
+.main-section .vote-block  span.upvote:before{
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid black;
+    top: -17px;
+    position: relative;
 }
 
 .main-section .vote-block span.downvote{
@@ -109,9 +127,48 @@
 }
 
 
+.main-section .vote-block  span.downvote:before{
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid black;
+    bottom: -17px;
+    position: relative;
+}
 
+.main-section .vote-msg{
+    width: 90%;
+    padding: 0 0 0 30px;
+}
 
+.main-section .vote-msg p{
+    display: block;
+    width: 100%;
+    font-size: 14px;
+    padding: 20px 0 0 0;
+    margin: 0;
+    color: #333;
+}
+.main-section .comment-txt{
+    margin: 30px 0 15px 0;
+    font-size: 14px;
+}
 
+.main-section .save-btn{
+    display: inline-block;
+    margin-left: 20px;
+    padding: 10px 15px;
+    background: #ddd;
+    cursor: pointer;
+}
+
+.all-comments{
+    display: block;
+    width: 100%;
+    margin: 30px 0px 20px 0
+}
 
 
 
