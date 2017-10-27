@@ -65,7 +65,7 @@ require(['javascripts/firebaseDB.js'], function (config) {
             }
 
             cancelCommentBlockFn(el) {
-
+                el.parentElement.remove();
             }
 
             createCommentBlock() {
