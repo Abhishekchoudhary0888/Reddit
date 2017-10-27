@@ -13,16 +13,51 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 this.obj = {};
                 this.elTarget = null;
                 this.elCount = 0;
+                this.storeObj = [];
 
                 this.targetRepDiv = null;
-                this.replySpan= null;
+                this.replySpan = null;
                 this.targetId;
                 this.attachEvents();
+                this.populateAllPost();
             }
 
             attachEvents() {
                 this.elButtonPost.addEventListener('click', this.postBtnClickListener.bind(this));
                 this.elUnitWrap.addEventListener('click', this.findClick.bind(this));
+            }
+
+            populateAllPost() {
+                var that = this,
+                    storeObj = [];
+
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(config.config);
+                }
+
+                var database = firebase.database();
+                var postRef = database.ref('Post');
+
+                postRef.on('value', function (obj) {
+                    var content = obj.val();
+                    var keys = Object.keys(content);
+
+                    for (var i = 0; i < keys.length; i++) {
+                        var k = content[keys[i]];
+                        storeObj.push(k);
+                    }
+
+                    for (var i = 0; i < storeObj.length; i++) {
+
+                        var domUnitPost = that.createPostFn();
+                        domUnitPost.querySelector('.vote').innerHTML = storeObj[i].voteCount ? storeObj[i].voteCount : 0;
+                        domUnitPost.id = storeObj[i].id;
+                        domUnitPost.querySelector('.title').innerHTML = storeObj[i].title;
+                        domUnitPost.querySelector('.description').innerHTML = storeObj[i].description;
+
+                        that.elUnitWrap.appendChild(domUnitPost); // Create post
+                    }
+                });
             }
 
             findClick(evt) {
@@ -125,7 +160,7 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 var elCommentBox = evt.parentElement.querySelector('.comment-box'),
                     value = elCommentBox.value;
 
-                var commentUnit=  this.createCommentUnitFn(value);
+                var commentUnit = this.createCommentUnitFn(value);
 
                 elCommentBox.value = '';
 
@@ -133,7 +168,7 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 elAllComments.appendChild(commentUnit);
             }
 
-            persistNewPostValue() {
+            persistPostValue() {
                 var title = this.elTopSection.querySelector('.input-title'),
                     description = this.elTopSection.querySelector('.textarea-msg');
 
@@ -169,7 +204,7 @@ require(['javascripts/firebaseDB.js'], function (config) {
             }
 
             postBtnClickListener() {
-                this.persistNewPostValue();
+                this.persistPostValue();
                 this.elUnitWrap.appendChild(this.createPostFn());
 
                 this.persistValueToDB('post');
