@@ -18,7 +18,7 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 this.storeObj = [];
 
                 this.targetRepDiv = null;
-                this.replySpan = null;
+                this.replySpanDom = null;
                 this.targetId;
                 this.attachEvents();
                 this.populateAllPost();
@@ -98,8 +98,14 @@ require(['javascripts/firebaseDB.js'], function (config) {
                     var commentBlock = this.createCommentUnitFn(textAreaValue);
                     outerWrap.appendChild(commentBlock);
                     el.parentElement.remove();
-                    this.replySpan.remove();
+                    this.replySpanDom.remove();
                 }
+
+                this.commentObj.comment = textAreaValue;
+                this.commentObj.id = commentBlock.id;
+                this.targetId = this.targetRepDiv.id;
+
+                this.persistValueToDB('commentVal');
             }
 
             cancelCommentBlockFn(el) {
@@ -133,8 +139,8 @@ require(['javascripts/firebaseDB.js'], function (config) {
             }
 
             replyCommentsFn(el) {
-                this.replySpan = el;
-                // var x = this.findAncestor(el, 'unit');
+                this.replySpanDom = el;
+                this.targetId = this.findAncestor(el, 'unit').id;
                 var outerDiv = this.targetRepDiv = el.parentElement;
                 var commentBlock = this.createCommentBlock();
 
@@ -180,21 +186,9 @@ require(['javascripts/firebaseDB.js'], function (config) {
 
                     this.targetId = evt.parentElement.parentElement.id;
                     this.commentObj.comment = this.commentVal;
-                    this.commentObj.parentID = null;
+                    this.commentObj.id = commentUnit.id;
                     this.persistValueToDB('commentVal');
                 }
-            }
-
-            persistPostValue() {
-                var title = this.elTopSection.querySelector('.input-title'),
-                    description = this.elTopSection.querySelector('.textarea-msg');
-
-                this.obj.title = title.value;
-                this.obj.description = description.value;
-
-                // Resetting the values
-                title.value = '';
-                description.value = '';
             }
 
             persistValueToDB(chk) {
@@ -216,18 +210,27 @@ require(['javascripts/firebaseDB.js'], function (config) {
                         voteCount: this.elCount
                     });
                 } else if (chk == 'commentVal') {
-                    database.ref('Post/' + this.targetId).update({
+                    database.ref('Comments/' + this.targetId).update({
                         comment: this.commentObj
                     });
                 }
             }
 
             postBtnClickListener() {
-                this.persistPostValue();
-                this.elUnitWrap.appendChild(this.createPostFn());
+                var title = this.elTopSection.querySelector('.input-title'),
+                    description = this.elTopSection.querySelector('.textarea-msg');
 
-                this.persistValueToDB('post');
-                this.obj = {};
+                this.obj.title = title.value;
+                this.obj.description = description.value;
+
+                if (title.value) {
+                    this.elUnitWrap.appendChild(this.createPostFn());
+                    this.persistValueToDB('post');
+                    // Resetting the values
+                    title.value = '';
+                    description.value = '';
+                    this.obj = {};
+                }
             }
 
             createPostFn() {
