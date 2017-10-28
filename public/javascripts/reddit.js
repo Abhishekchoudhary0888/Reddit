@@ -13,6 +13,8 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 this.obj = {};
                 this.elTarget = null;
                 this.elCount = 0;
+                this.commentVal = null;
+                this.commentObj = {};
                 this.storeObj = [];
 
                 this.targetRepDiv = null;
@@ -38,7 +40,7 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 var database = firebase.database();
                 var postRef = database.ref('Post');
 
-                postRef.on('value', function (obj) {
+                postRef.once('value').then(function (obj) {
                     var content = obj.val();
                     var keys = Object.keys(content);
 
@@ -72,7 +74,7 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 }
 
                 if (this.elTarget.classList.contains('save-btn')) {
-                    this.updateCommentBlock(this.elTarget);
+                    this.addCommentBlock(this.elTarget);
                 }
 
                 if (this.elTarget.classList.contains('reply-comment')) {
@@ -86,17 +88,18 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 if (this.elTarget.classList.contains('cancel-comment')) {
                     this.cancelCommentBlockFn(this.elTarget);
                 }
-
             }
 
             updateCommentOnReply(el) {
                 var outerWrap = el.parentElement.parentElement;
                 var textAreaValue = outerWrap.querySelector('textarea').value;
 
-                var commentBlock = this.createCommentUnitFn(textAreaValue);
-                outerWrap.appendChild(commentBlock);
-                el.parentElement.remove();
-                this.replySpan.remove();
+                if (textAreaValue) {
+                    var commentBlock = this.createCommentUnitFn(textAreaValue);
+                    outerWrap.appendChild(commentBlock);
+                    el.parentElement.remove();
+                    this.replySpan.remove();
+                }
             }
 
             cancelCommentBlockFn(el) {
@@ -123,10 +126,16 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 return outerDiv;
             }
 
+
+            findAncestor(el, cls) {
+                while ((el = el.parentElement) && !el.classList.contains(cls));
+                return el;
+            }
+
             replyCommentsFn(el) {
                 this.replySpan = el;
-                var outerDiv = el.parentElement;
-                this.targetRepDiv = outerDiv;
+                // var x = this.findAncestor(el, 'unit');
+                var outerDiv = this.targetRepDiv = el.parentElement;
                 var commentBlock = this.createCommentBlock();
 
                 outerDiv.appendChild(commentBlock);
@@ -147,6 +156,7 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 var commentUnit = document.createElement('div');
                 commentUnit.classList.add('comment-unit');
                 commentUnit.innerHTML = value;
+                commentUnit.id = Date.now() + Math.round(Math.random());
 
                 var elReply = document.createElement('span');
                 elReply.innerHTML = 'Reply';
@@ -156,16 +166,23 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 return commentUnit;
             }
 
-            updateCommentBlock(evt) {
-                var elCommentBox = evt.parentElement.querySelector('.comment-box'),
-                    value = elCommentBox.value;
+            addCommentBlock(evt) {
+                var elCommentBox = evt.parentElement.querySelector('.comment-box');
+                this.commentVal = elCommentBox.value;
 
-                var commentUnit = this.createCommentUnitFn(value);
+                if (elCommentBox.value) {
+                    var commentUnit = this.createCommentUnitFn(this.commentVal);
 
-                elCommentBox.value = '';
+                    elCommentBox.value = '';
 
-                var elAllComments = evt.parentElement.querySelector('.all-comments');
-                elAllComments.appendChild(commentUnit);
+                    var elAllComments = evt.parentElement.querySelector('.all-comments');
+                    elAllComments.appendChild(commentUnit);
+
+                    this.targetId = evt.parentElement.parentElement.id;
+                    this.commentObj.comment = this.commentVal;
+                    this.commentObj.parentID = null;
+                    this.persistValueToDB('commentVal');
+                }
             }
 
             persistPostValue() {
@@ -198,8 +215,10 @@ require(['javascripts/firebaseDB.js'], function (config) {
                     database.ref('Post/' + this.targetId).update({
                         voteCount: this.elCount
                     });
-                } else if (chk == 'comment') {
-
+                } else if (chk == 'commentVal') {
+                    database.ref('Post/' + this.targetId).update({
+                        comment: this.commentObj
+                    });
                 }
             }
 
