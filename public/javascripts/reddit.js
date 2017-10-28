@@ -13,13 +13,14 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 this.obj = {};
                 this.elTarget = null;
                 this.elCount = 0;
+                this.voteFlag = true;
                 this.commentVal = null;
                 this.commentObj = {};
                 this.storeObj = [];
-
                 this.targetRepDiv = null;
                 this.replySpanDom = null;
                 this.targetId;
+
                 this.attachEvents();
                 this.populateAllPost();
                 this.populateAllComments();
@@ -89,7 +90,7 @@ require(['javascripts/firebaseDB.js'], function (config) {
                             var commentUnit = that.createCommentUnitFn(storeObj[i].comment);
                             commentUnit.id = keys[i];
                             allComments.appendChild(commentUnit);
-                        } else if( dom.classList.contains('comment-unit')){
+                        } else if (dom.classList.contains('comment-unit')) {
                             var commentUnit = that.createCommentUnitFn(storeObj[i].comment);
                             commentUnit.id = keys[i];
                             dom.appendChild(commentUnit);
@@ -184,14 +185,20 @@ require(['javascripts/firebaseDB.js'], function (config) {
             }
 
             updateVoteValueFn(el, vote) {
-                var elVote = el.parentElement.querySelector('.vote');
-                this.targetId = elVote.parentElement.parentElement.id;
+                var elVote = el.parentElement.querySelector('.vote'),
+                    parentDiv = elVote.parentElement.parentElement;
+
+                if (!parentDiv.classList.contains('voted')) {
+                    parentDiv.classList.add('voted');
+                    this.targetId = parentDiv.id;
+
+                    this.elCount = eval(elVote.innerHTML) + vote;
+                    elVote.innerHTML = this.elCount;
+
+                    this.persistValueToDB('count');
+                }
 
 
-                this.elCount = eval(elVote.innerHTML) + vote;
-                elVote.innerHTML = this.elCount;
-
-                this.persistValueToDB('count');
             }
 
             createCommentUnitFn(value) {
