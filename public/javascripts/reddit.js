@@ -51,6 +51,7 @@ require(['javascripts/firebaseDB.js'], function (config) {
                         storeObj.push(k);
                     }
 
+                    storeObj= that.sortStoreObj(storeObj);
                     for (var i = 0; i < storeObj.length; i++) {
                         var domUnitPost = that.createPostFn();
                         domUnitPost.querySelector('.vote').innerHTML = storeObj[i].voteCount ? storeObj[i].voteCount : 0;
@@ -61,6 +62,25 @@ require(['javascripts/firebaseDB.js'], function (config) {
                         that.elUnitWrap.appendChild(domUnitPost); // Create post
                     }
                 });
+            }
+
+            sortStoreObj (storeObj){
+                var obj=[];
+                for(var i=0; i< storeObj.length; i++){
+                  obj.push(storeObj[i]);
+                }
+
+                for(var i=0; i<obj.length; i++){
+                    for(var j=i+1; j<obj.length; j++){
+                        if(obj[i].voteCount < obj[j].voteCount){
+                            var d = obj[j];
+                            obj[j]= obj[i];
+                            obj[i] = d;
+                        }
+                    }
+                }
+
+                return obj;
             }
 
             populateAllComments() {
@@ -247,7 +267,8 @@ require(['javascripts/firebaseDB.js'], function (config) {
                         {
                             title: this.obj.title,
                             description: this.obj.description,
-                            id: this.targetId
+                            id: this.targetId,
+                            voteCount: this.obj.voteCount
                         });
                 } else if (chk == 'count') {
                     database.ref('Post/' + this.targetId).update({
@@ -268,6 +289,7 @@ require(['javascripts/firebaseDB.js'], function (config) {
 
                 this.obj.title = title.value;
                 this.obj.description = description.value;
+                this.obj.voteCount = 0;
 
                 if (title.value) {
                     this.elUnitWrap.appendChild(this.createPostFn());
