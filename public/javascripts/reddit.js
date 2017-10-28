@@ -102,8 +102,8 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 }
 
                 this.commentObj.comment = textAreaValue;
-                this.commentObj.id = commentBlock.id;
-                this.targetId = this.targetRepDiv.id;
+                this.commentObj.parrentid = this.targetRepDiv.id;
+                this.targetId = commentBlock.id ;
 
                 this.persistValueToDB('commentVal');
             }
@@ -184,9 +184,10 @@ require(['javascripts/firebaseDB.js'], function (config) {
                     var elAllComments = evt.parentElement.querySelector('.all-comments');
                     elAllComments.appendChild(commentUnit);
 
-                    this.targetId = evt.parentElement.parentElement.id;
+                    this.targetId = commentUnit.id ;
                     this.commentObj.comment = this.commentVal;
-                    this.commentObj.id = commentUnit.id;
+                    this.commentObj.parrentid = evt.parentElement.parentElement.id;
+
                     this.persistValueToDB('commentVal');
                 }
             }
@@ -211,7 +212,9 @@ require(['javascripts/firebaseDB.js'], function (config) {
                     });
                 } else if (chk == 'commentVal') {
                     database.ref('Comments/' + this.targetId).update({
-                        comment: this.commentObj
+
+                        comment: this.commentObj.comment,
+                        parentId: this.commentObj.parrentid
                     });
                 }
             }
