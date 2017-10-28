@@ -22,6 +22,7 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 this.targetId;
                 this.attachEvents();
                 this.populateAllPost();
+                this.populateAllComments();
             }
 
             attachEvents() {
@@ -50,7 +51,6 @@ require(['javascripts/firebaseDB.js'], function (config) {
                     }
 
                     for (var i = 0; i < storeObj.length; i++) {
-
                         var domUnitPost = that.createPostFn();
                         domUnitPost.querySelector('.vote').innerHTML = storeObj[i].voteCount ? storeObj[i].voteCount : 0;
                         domUnitPost.id = storeObj[i].id;
@@ -58,6 +58,42 @@ require(['javascripts/firebaseDB.js'], function (config) {
                         domUnitPost.querySelector('.description').innerHTML = storeObj[i].description;
 
                         that.elUnitWrap.appendChild(domUnitPost); // Create post
+                    }
+                });
+            }
+
+            populateAllComments() {
+                var that = this,
+                    storeObj = [];
+
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(config.config);
+                }
+
+                var database = firebase.database();
+                var commentRef = database.ref('Comments');
+
+                commentRef.once('value').then(function (obj) {
+                    var content = obj.val();
+                    var keys = Object.keys(content);
+
+                    for (var i = 0; i < keys.length; i++) {
+                        var k = content[keys[i]];
+                        storeObj.push(k);
+                    }
+
+                    for (var i = 0; i < storeObj.length; i++) {
+                        var dom = document.querySelector('[id="' + storeObj[i].parentId + '"]');
+                        if (dom.classList.contains('unit')) {
+                            var allComments = dom.querySelector('.all-comments');
+                            var commentUnit = that.createCommentUnitFn(storeObj[i].comment);
+                            commentUnit.id = keys[i];
+                            allComments.appendChild(commentUnit);
+                        } else if( dom.classList.contains('comment-unit')){
+                            var commentUnit = that.createCommentUnitFn(storeObj[i].comment);
+                            commentUnit.id = keys[i];
+                            dom.appendChild(commentUnit);
+                        }
                     }
                 });
             }
@@ -103,7 +139,7 @@ require(['javascripts/firebaseDB.js'], function (config) {
 
                 this.commentObj.comment = textAreaValue;
                 this.commentObj.parrentid = this.targetRepDiv.id;
-                this.targetId = commentBlock.id ;
+                this.targetId = commentBlock.id;
 
                 this.persistValueToDB('commentVal');
             }
@@ -184,7 +220,7 @@ require(['javascripts/firebaseDB.js'], function (config) {
                     var elAllComments = evt.parentElement.querySelector('.all-comments');
                     elAllComments.appendChild(commentUnit);
 
-                    this.targetId = commentUnit.id ;
+                    this.targetId = commentUnit.id;
                     this.commentObj.comment = this.commentVal;
                     this.commentObj.parrentid = evt.parentElement.parentElement.id;
 
