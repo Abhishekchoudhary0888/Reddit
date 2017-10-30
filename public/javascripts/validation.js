@@ -13,6 +13,7 @@ require(["javascripts/firebaseDB.js"], function (config) {
                 this.emailValidationFlag = false;
                 this.passwordValidationFlag = false;
 
+                this.loginFLag = true;
                 this.attachEvent();
             }
 
@@ -145,7 +146,7 @@ require(["javascripts/firebaseDB.js"], function (config) {
 
                 this.elSubmitBtn.addEventListener('click', function (e) {
                     this.innerHTML = 'Login, please wait...';
-
+                    that.loginFLag = true;
                     if (!firebase.apps.length) {
                         firebase.initializeApp(config.config);
                     }
@@ -169,7 +170,8 @@ require(["javascripts/firebaseDB.js"], function (config) {
 
                         }
 
-                        if (!status) {
+                        if (!status && that.loginFLag) {
+                            that.loginFLag = false;
                             that.elForm.reset();
                             that.resetForm();
                             alert('No record found, kindly signup first !!');
