@@ -19,29 +19,14 @@ router.get('/home', function(req, res) {
 });
 
 
-// router.get('/logout', function(req, res) {
-//   req.logout();
-//   res.redirect('/');
-// });
-
-
-// router.post('/signup', passport.authenticate('local-signup', {
-//   successRedirect: '/profile',
-//   failureRedirect: '/signup',
-//   failureFlash: true,
-// }));
-
-// router.post('/login', function(req, res) {
-//   console.log('insideeeeee');
-//   if(myIndex.chkFn()){
-//     res.redirect("/inde");
-//   }
-// });
+router.get('/logout', function(req, res) {
+  res.redirect("/login");
+});
 
 module.exports = router;
 
-function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated())
-    return next();
-  res.redirect('/');
-}
+// function isLoggedIn(req, res, next) {
+//   if (req.isAuthenticated())
+//     return next();
+//   res.redirect('/');
+// }
