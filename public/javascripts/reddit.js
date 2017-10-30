@@ -13,10 +13,8 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 this.obj = {};
                 this.elTarget = null;
                 this.elCount = 0;
-                this.voteFlag = true;
                 this.commentVal = null;
                 this.commentObj = {};
-                this.storeObj = [];
                 this.targetRepDiv = null;
                 this.replySpanDom = null;
                 this.targetId;
