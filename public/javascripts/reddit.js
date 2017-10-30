@@ -51,7 +51,7 @@ require(['javascripts/firebaseDB.js'], function (config) {
                         storeObj.push(k);
                     }
 
-                    storeObj= that.sortStoreObj(storeObj);
+                    storeObj = that.sortStoreObj(storeObj);
                     for (var i = 0; i < storeObj.length; i++) {
                         var domUnitPost = that.createPostFn();
                         domUnitPost.querySelector('.vote').innerHTML = storeObj[i].voteCount ? storeObj[i].voteCount : 0;
@@ -64,22 +64,21 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 });
             }
 
-            sortStoreObj (storeObj){
-                var obj=[];
-                for(var i=0; i< storeObj.length; i++){
-                  obj.push(storeObj[i]);
+            sortStoreObj(storeObj) {
+                var obj = [];
+                for (var i = 0; i < storeObj.length; i++) {
+                    obj.push(storeObj[i]);
                 }
 
-                for(var i=0; i<obj.length; i++){
-                    for(var j=i+1; j<obj.length; j++){
-                        if(obj[i].voteCount < obj[j].voteCount){
+                for (var i = 0; i < obj.length; i++) {
+                    for (var j = i + 1; j < obj.length; j++) {
+                        if (obj[i].voteCount < obj[j].voteCount) {
                             var d = obj[j];
-                            obj[j]= obj[i];
+                            obj[j] = obj[i];
                             obj[i] = d;
                         }
                     }
                 }
-
                 return obj;
             }
 
@@ -170,20 +169,15 @@ require(['javascripts/firebaseDB.js'], function (config) {
             }
 
             createCommentBlock() {
-                var outerDiv = document.createElement('div');
-                outerDiv.classList.add('reply-comment-box');
+                var outerDiv = this.createDomElementFunction('div', 'reply-comment-box');
 
-                var elTextBox = document.createElement('textarea');
+                var elTextBox = this.createDomElementFunction('textarea');
                 outerDiv.appendChild(elTextBox);
 
-                var elSave = document.createElement('span');
-                elSave.classList.add('save-comment');
-                elSave.innerHTML = 'Save';
+                var elSave = this.createDomElementFunction('span','save-comment','','Save');
                 outerDiv.appendChild(elSave);
 
-                var elCancel = document.createElement('span');
-                elCancel.classList.add('cancel-comment');
-                elCancel.innerHTML = 'Cancel';
+                var elCancel = this.createDomElementFunction('span','cancel-comment','','Cancel');
                 outerDiv.appendChild(elCancel);
 
                 return outerDiv;
@@ -222,14 +216,9 @@ require(['javascripts/firebaseDB.js'], function (config) {
             }
 
             createCommentUnitFn(value) {
-                var commentUnit = document.createElement('div');
-                commentUnit.classList.add('comment-unit');
-                commentUnit.innerHTML = value;
-                commentUnit.id = Date.now() + Math.round(Math.random());
+                var commentUnit = this.createDomElementFunction('div','comment-unit', Date.now() + Math.round(Math.random()), value);
 
-                var elReply = document.createElement('span');
-                elReply.innerHTML = 'Reply';
-                elReply.classList.add('reply-comment');
+                var elReply = this.createDomElementFunction('span','reply-comment', '', 'Reply');
                 commentUnit.appendChild(elReply);
 
                 return commentUnit;
@@ -301,62 +290,55 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 }
             }
 
+            createDomElementFunction(el, elClassName, elIdName, elText) {
+                var elDom = document.createElement(el);
+
+                elClassName ? elDom.classList.add(elClassName) : '';
+                elIdName ? (elDom.id = elIdName) : '';
+                elText ? (elDom.innerHTML = elText) : '';
+
+                return elDom;
+            }
+
             createPostFn() {
-                var unit = document.createElement('div');
-                unit.classList.add('unit');
+
                 this.targetId = Date.now() + Math.round(Math.random());
                 this.obj.id = this.targetId;
-                unit.id = this.targetId;
+                var unit = this.createDomElementFunction('div', 'unit', this.targetId);
 
                 /* voteBlock */
-                var voteBlock = document.createElement('div');
-                voteBlock.classList.add('vote-block');
+                var voteBlock = this.createDomElementFunction('div', 'vote-block');
 
-                var spanUpVote = document.createElement('span');
-                spanUpVote.classList.add('upvote');
+                var spanUpVote = this.createDomElementFunction('span', 'upvote');
                 voteBlock.appendChild(spanUpVote);
 
-                var spanVote = document.createElement('span');
-                spanVote.classList.add('vote');
-                spanVote.innerHTML = '0';
+
+                var spanVote = this.createDomElementFunction('span', 'vote', '', '0');
                 voteBlock.appendChild(spanVote);
 
-                var spanDownVote = document.createElement('span');
-                spanDownVote.classList.add('downvote');
+
+                var spanDownVote = this.createDomElementFunction('span', 'downvote');
                 voteBlock.appendChild(spanDownVote);
 
                 /* voteMsg */
-                var voteMsg = document.createElement('div');
-                voteMsg.classList.add('vote-msg');
+                var voteMsg = this.createDomElementFunction('div', 'vote-msg');
 
-                var pTitle = document.createElement('p');
-                pTitle.classList.add('title');
-                pTitle.innerHTML = this.obj.title;
+                var pTitle = this.createDomElementFunction('p', 'title', '', this.obj.title);
                 voteMsg.appendChild(pTitle);
 
-
-                var pDescription = document.createElement('p');
-                pDescription.classList.add('description');
-                pDescription.innerHTML = this.obj.description;
+                var pDescription = this.createDomElementFunction('p', 'description', '', this.obj.description);
                 voteMsg.appendChild(pDescription);
 
-                var commentTxt = document.createElement('div');
-                commentTxt.classList.add('comment-txt');
-                commentTxt.innerHTML = "Comment section below";
+                var commentTxt = this.createDomElementFunction('div', 'comment-txt', '', 'Comment section below');
                 voteMsg.appendChild(commentTxt);
 
-                var commentBox = document.createElement('textarea');
-                commentBox.classList.add('comment-box');
+                var commentBox = this.createDomElementFunction('textarea', 'comment-box');
                 voteMsg.appendChild(commentBox);
 
-                var elSaveBtn = document.createElement('span');
-                elSaveBtn.classList.add('save-btn');
-                elSaveBtn.innerHTML = 'Save';
+                var elSaveBtn = this.createDomElementFunction('span', 'save-btn','','Save');
                 voteMsg.appendChild(elSaveBtn);
 
-
-                var allComments = document.createElement('div');
-                allComments.classList.add('all-comments');
+                var allComments = this.createDomElementFunction('div', 'all-comments');
                 voteMsg.appendChild(allComments);
 
                 /* Append voteBlock  and voteMsg into Unit*/
@@ -365,13 +347,9 @@ require(['javascripts/firebaseDB.js'], function (config) {
 
                 return unit;
             }
-
-
         }
 
         new Reddit();
-
-
     }());
 
 });
