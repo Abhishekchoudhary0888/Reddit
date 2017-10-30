@@ -100,7 +100,7 @@ require(["javascripts/firebaseDB.js"], function (config) {
                 }
             }
 
-            resetForm(){
+            resetForm() {
                 this.elSubmitBtn.innerHTML = 'Login';
                 this.elSubmitBtn.classList.add('disable');
                 this.nameValidationFlag = false;
@@ -139,8 +139,8 @@ require(["javascripts/firebaseDB.js"], function (config) {
 
             requestLoginFormFn(formData) {
 
-                var status= false,
-                    that= this;
+                var status = false,
+                    that = this;
 
 
                 this.elSubmitBtn.addEventListener('click', function (e) {
@@ -156,17 +156,20 @@ require(["javascripts/firebaseDB.js"], function (config) {
 
                     loginRef.once('value').then(function (obj) {
                         var content = obj.val();
-                        var keys = Object.keys(content);
+                        if (content) {
+                            var keys = Object.keys(content);
 
-                        for(var i=0; i< keys.length; i++){
-                            var  k = content[keys[i]];
-                            if(k.name == formData.name && k.email == formData.email && k.password == formData.password){
-                                status= true;
-                                window.location.href = "/home";
+                            for (var i = 0; i < keys.length; i++) {
+                                var k = content[keys[i]];
+                                if (k.name == formData.name && k.email == formData.email && k.password == formData.password) {
+                                    status = true;
+                                    window.location.href = "/home";
+                                }
                             }
+
                         }
 
-                        if(!status){
+                        if (!status) {
                             that.elForm.reset();
                             that.resetForm();
                             alert('No record found, kindly signup first !!');
