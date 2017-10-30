@@ -57,14 +57,16 @@
 }
 
 .logout {
+    text-align: center;
+    padding: 10px;
+    display: inline-table;
     width: 100px;
-    height: 40px;
+    color: #333;
     background: #eee;
     border: 1px solid #ccc;
     font-size: 14px;
     cursor: pointer;
     outline: none;
-
 }
 
 .logout:hover {
