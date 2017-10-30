@@ -154,8 +154,7 @@ require(["javascripts/firebaseDB.js"], function (config) {
                     var loginRef = database.ref('loginDetails');
 
 
-                    loginRef.on('value', function(obj){
-
+                    loginRef.once('value').then(function (obj) {
                         var content = obj.val();
                         var keys = Object.keys(content);
 
