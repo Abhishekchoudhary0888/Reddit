@@ -20,7 +20,24 @@
     </div>
 </div>
 
+<script id="listContainer" type="text/html">
+    <div class="unit" id="{{id}}">
+        <div class="vote-block">
+            <span class="upvote"></span>
+            <span class="vote">{{vote}}</span>
+            <span class="downvote"></span>
+        </div>
+        <div class="vote-msg">
+            <p class="title">{{title}}</p>
+            <p class="description">{{description}}</p>
+            <div class="comment-txt">Comment section below</div>
+            <textarea class="comment-box"></textarea><span class="save-btn">Save</span>
+            <div class="all-comments"></div>
+        </div>
+    </div>
+</script>
 
+<script type="text/javascript" src="/javascripts/mustache.min.js" ></script>
 <% include partials/commonscript %>
 
 <script src="/javascripts/reddit.js"></script>

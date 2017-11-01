@@ -51,7 +51,10 @@ require(['javascripts/firebaseDB.js'], function (config) {
 
                     storeObj = that.sortStoreObj(storeObj);
                     for (var i = 0; i < storeObj.length; i++) {
-                        var domUnitPost = that.createPostFn();
+                        var domUnitPost = document.createElement('div');
+                        domUnitPost.innerHTML = that.createPostFn();
+                        domUnitPost= domUnitPost.getElementsByTagName('div')[0];
+
                         domUnitPost.querySelector('.vote').innerHTML = storeObj[i].voteCount ? storeObj[i].voteCount : 0;
                         domUnitPost.id = storeObj[i].id;
                         domUnitPost.querySelector('.title').innerHTML = storeObj[i].title;
@@ -172,10 +175,10 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 var elTextBox = this.createDomElementFunction('textarea');
                 outerDiv.appendChild(elTextBox);
 
-                var elSave = this.createDomElementFunction('span','save-comment','','Save');
+                var elSave = this.createDomElementFunction('span', 'save-comment', '', 'Save');
                 outerDiv.appendChild(elSave);
 
-                var elCancel = this.createDomElementFunction('span','cancel-comment','','Cancel');
+                var elCancel = this.createDomElementFunction('span', 'cancel-comment', '', 'Cancel');
                 outerDiv.appendChild(elCancel);
 
                 return outerDiv;
@@ -209,14 +212,12 @@ require(['javascripts/firebaseDB.js'], function (config) {
 
                     this.persistValueToDB('count');
                 }
-
-
             }
 
             createCommentUnitFn(value) {
-                var commentUnit = this.createDomElementFunction('div','comment-unit', Date.now() + Math.round(Math.random()), value);
+                var commentUnit = this.createDomElementFunction('div', 'comment-unit', Date.now() + Math.round(Math.random()), value);
 
-                var elReply = this.createDomElementFunction('span','reply-comment', '', 'Reply');
+                var elReply = this.createDomElementFunction('span', 'reply-comment', '', 'Reply');
                 commentUnit.appendChild(elReply);
 
                 return commentUnit;
@@ -302,48 +303,18 @@ require(['javascripts/firebaseDB.js'], function (config) {
 
                 this.targetId = Date.now() + Math.round(Math.random());
                 this.obj.id = this.targetId;
-                var unit = this.createDomElementFunction('div', 'unit', this.targetId);
 
-                /* voteBlock */
-                var voteBlock = this.createDomElementFunction('div', 'vote-block');
+                var obj = {
+                    id: this.obj.id,
+                    vote: 0,
+                    title: this.obj.title,
+                    description: this.obj.description
+                };
 
-                var spanUpVote = this.createDomElementFunction('span', 'upvote');
-                voteBlock.appendChild(spanUpVote);
+                var template = document.getElementById('listContainer').innerHTML;
+                var output = Mustache.render(template, obj);
 
-
-                var spanVote = this.createDomElementFunction('span', 'vote', '', '0');
-                voteBlock.appendChild(spanVote);
-
-
-                var spanDownVote = this.createDomElementFunction('span', 'downvote');
-                voteBlock.appendChild(spanDownVote);
-
-                /* voteMsg */
-                var voteMsg = this.createDomElementFunction('div', 'vote-msg');
-
-                var pTitle = this.createDomElementFunction('p', 'title', '', this.obj.title);
-                voteMsg.appendChild(pTitle);
-
-                var pDescription = this.createDomElementFunction('p', 'description', '', this.obj.description);
-                voteMsg.appendChild(pDescription);
-
-                var commentTxt = this.createDomElementFunction('div', 'comment-txt', '', 'Comment section below');
-                voteMsg.appendChild(commentTxt);
-
-                var commentBox = this.createDomElementFunction('textarea', 'comment-box');
-                voteMsg.appendChild(commentBox);
-
-                var elSaveBtn = this.createDomElementFunction('span', 'save-btn','','Save');
-                voteMsg.appendChild(elSaveBtn);
-
-                var allComments = this.createDomElementFunction('div', 'all-comments');
-                voteMsg.appendChild(allComments);
-
-                /* Append voteBlock  and voteMsg into Unit*/
-                unit.appendChild(voteBlock);
-                unit.appendChild(voteMsg);
-
-                return unit;
+                return output;
             }
         }
 
