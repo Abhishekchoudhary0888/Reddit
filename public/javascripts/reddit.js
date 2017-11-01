@@ -22,33 +22,12 @@ define(['javascripts/firebaseDB.js', 'javascripts/post.js'], function (config, m
             this.populateAllPost();
         }
 
+
         attachEvents() {
             this.elButtonPost.addEventListener('click', this.postBtnClickListener.bind(this));
             this.elUnitWrap.addEventListener('click', this.findClick.bind(this));
         }
 
-        postBtnClickListener() {
-            var title = this.elTopSection.querySelector('.input-title'),
-                description = this.elTopSection.querySelector('.textarea-msg');
-
-            this.obj.title = title.value;
-            this.obj.description = description.value;
-            this.obj.voteCount = 0;
-
-            if (title.value) {
-                var domUnitPost = document.createElement('div');
-                domUnitPost.innerHTML = this.createPostFn();
-                domUnitPost = domUnitPost.getElementsByTagName('div')[0];
-
-
-                this.elUnitWrap.appendChild(domUnitPost);
-                this.persistValueToDB('post');
-                // Resetting the values
-                title.value = '';
-                description.value = '';
-                this.obj = {};
-            }
-        }
 
         populateAllPost() {
             var that = this,
@@ -337,7 +316,6 @@ define(['javascripts/firebaseDB.js', 'javascripts/post.js'], function (config, m
 
     var RedditCons = Reddit;
 
-    debugger;
     return {
         reddit: RedditCons
     }

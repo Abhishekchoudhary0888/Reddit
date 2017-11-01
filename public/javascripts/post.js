@@ -14,5 +14,3 @@ define([], function () {
         mypost: mypost
     }
 });
-
-
