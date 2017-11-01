@@ -22,7 +22,6 @@ require(['javascripts/firebaseDB.js'], function (config) {
 
                 this.attachEvents();
                 this.populateAllPost();
-                this.populateAllComments();
             }
 
             attachEvents() {
@@ -43,25 +42,47 @@ require(['javascripts/firebaseDB.js'], function (config) {
 
                 postRef.once('value').then(function (obj) {
                     var content = obj.val();
-                    var keys = Object.keys(content);
 
-                    for (var i = 0; i < keys.length; i++) {
-                        var k = content[keys[i]];
-                        storeObj.push(k);
-                    }
+                    if (content) {
+                        var keys = Object.keys(content);
 
-                    storeObj = that.sortStoreObj(storeObj);
-                    for (var i = 0; i < storeObj.length; i++) {
-                        var domUnitPost = document.createElement('div');
-                        domUnitPost.innerHTML = that.createPostFn();
-                        domUnitPost = domUnitPost.getElementsByTagName('div')[0];
+                        for (var i = 0; i < keys.length; i++) {
+                            var k = content[keys[i]];
+                            storeObj.push(k);
+                        }
 
-                        domUnitPost.querySelector('.vote').innerHTML = storeObj[i].voteCount ? storeObj[i].voteCount : 0;
-                        domUnitPost.id = storeObj[i].id;
-                        domUnitPost.querySelector('.title').innerHTML = storeObj[i].title;
-                        domUnitPost.querySelector('.description').innerHTML = storeObj[i].description;
+                        storeObj = that.sortStoreObj(storeObj);
+                        for (var i = 0; i < storeObj.length; i++) {
+                            var domUnitPost = document.createElement('div');
+                            domUnitPost.innerHTML = that.createPostFn();
+                            domUnitPost = domUnitPost.getElementsByTagName('div')[0];
 
-                        that.elUnitWrap.appendChild(domUnitPost); // Create post
+                            domUnitPost.querySelector('.vote').innerHTML = storeObj[i].voteCount ? storeObj[i].voteCount : 0;
+                            domUnitPost.id = storeObj[i].id;
+                            domUnitPost.querySelector('.title').innerHTML = storeObj[i].title;
+                            domUnitPost.querySelector('.description').innerHTML = storeObj[i].description;
+
+                            that.elUnitWrap.appendChild(domUnitPost); // Create post
+
+                            // For comments
+                            var commentObj = Object.keys(storeObj[i].comments);
+                            for (var j = 0; j < commentObj.length; j++) {
+                                var tempObj = storeObj[i].comments[commentObj[j]];
+
+                                var dom = document.querySelector('[id="' + tempObj.parentId + '"]');
+
+                                if (dom.classList.contains('unit')) {
+                                    var allComments = domUnitPost.querySelector('.all-comments');
+                                    var commentUnit = that.createCommentUnitFn(tempObj.comment);
+                                    commentUnit.id = tempObj.id;
+                                    allComments.appendChild(commentUnit);
+                                } else if (dom.classList.contains('comment-unit')) {
+                                    var commentUnit = that.createCommentUnitFn(tempObj.comment);
+                                    commentUnit.id = tempObj.id;
+                                    dom.appendChild(commentUnit);
+                                }
+                            }
+                        }
                     }
                 });
             }
@@ -82,42 +103,6 @@ require(['javascripts/firebaseDB.js'], function (config) {
                     }
                 }
                 return obj;
-            }
-
-            populateAllComments() {
-                var that = this,
-                    storeObj = [];
-
-                if (!firebase.apps.length) {
-                    firebase.initializeApp(config.config);
-                }
-
-                var database = firebase.database();
-                var commentRef = database.ref('Comments');
-
-                commentRef.once('value').then(function (obj) {
-                    var content = obj.val();
-                    var keys = Object.keys(content);
-
-                    for (var i = 0; i < keys.length; i++) {
-                        var k = content[keys[i]];
-                        storeObj.push(k);
-                    }
-
-                    for (var i = 0; i < storeObj.length; i++) {
-                        var dom = document.querySelector('[id="' + storeObj[i].parentId + '"]');
-                        if (dom.classList.contains('unit')) {
-                            var allComments = dom.querySelector('.all-comments');
-                            var commentUnit = that.createCommentUnitFn(storeObj[i].comment);
-                            commentUnit.id = keys[i];
-                            allComments.appendChild(commentUnit);
-                        } else if (dom.classList.contains('comment-unit')) {
-                            var commentUnit = that.createCommentUnitFn(storeObj[i].comment);
-                            commentUnit.id = keys[i];
-                            dom.appendChild(commentUnit);
-                        }
-                    }
-                });
             }
 
             findClick(evt) {
