@@ -5,7 +5,7 @@ define([], function () {
         }
 
         attachEvent() {
-            console.log('ss');
+
         }
     }
 
