@@ -18,6 +18,7 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 this.targetRepDiv = null;
                 this.replySpanDom = null;
                 this.targetId;
+                this.unitId;
 
                 this.attachEvents();
                 this.populateAllPost();
@@ -53,7 +54,7 @@ require(['javascripts/firebaseDB.js'], function (config) {
                     for (var i = 0; i < storeObj.length; i++) {
                         var domUnitPost = document.createElement('div');
                         domUnitPost.innerHTML = that.createPostFn();
-                        domUnitPost= domUnitPost.getElementsByTagName('div')[0];
+                        domUnitPost = domUnitPost.getElementsByTagName('div')[0];
 
                         domUnitPost.querySelector('.vote').innerHTML = storeObj[i].voteCount ? storeObj[i].voteCount : 0;
                         domUnitPost.id = storeObj[i].id;
@@ -148,6 +149,8 @@ require(['javascripts/firebaseDB.js'], function (config) {
             }
 
             updateCommentOnReply(el) {
+                var ancestor = this.findAncestor(el, 'unit');
+
                 var outerWrap = el.parentElement.parentElement;
                 var textAreaValue = outerWrap.querySelector('textarea').value;
 
@@ -160,7 +163,8 @@ require(['javascripts/firebaseDB.js'], function (config) {
 
                 this.commentObj.comment = textAreaValue;
                 this.commentObj.parrentid = this.targetRepDiv.id;
-                this.targetId = commentBlock.id;
+                this.unitId = commentBlock.id;
+                this.targetId = ancestor.id;
 
                 this.persistValueToDB('commentVal');
             }
@@ -224,6 +228,7 @@ require(['javascripts/firebaseDB.js'], function (config) {
             }
 
             addCommentBlock(evt) {
+                var ancestor = this.findAncestor(evt, 'unit');
                 var elCommentBox = evt.parentElement.querySelector('.comment-box');
                 this.commentVal = elCommentBox.value;
 
@@ -235,7 +240,8 @@ require(['javascripts/firebaseDB.js'], function (config) {
                     var elAllComments = evt.parentElement.querySelector('.all-comments');
                     elAllComments.appendChild(commentUnit);
 
-                    this.targetId = commentUnit.id;
+                    this.unitId = commentUnit.id;
+                    this.targetId = ancestor.id;
                     this.commentObj.comment = this.commentVal;
                     this.commentObj.parrentid = evt.parentElement.parentElement.id;
 
@@ -263,8 +269,8 @@ require(['javascripts/firebaseDB.js'], function (config) {
                         voteCount: this.elCount
                     });
                 } else if (chk == 'commentVal') {
-                    database.ref('Comments/' + this.targetId).update({
-
+                    database.ref('Post/' + this.targetId + '/comments/' + this.unitId).update({
+                        id: this.unitId,
                         comment: this.commentObj.comment,
                         parentId: this.commentObj.parrentid
                     });
@@ -280,7 +286,12 @@ require(['javascripts/firebaseDB.js'], function (config) {
                 this.obj.voteCount = 0;
 
                 if (title.value) {
-                    this.elUnitWrap.appendChild(this.createPostFn());
+                    var domUnitPost = document.createElement('div');
+                    domUnitPost.innerHTML = this.createPostFn();
+                    domUnitPost = domUnitPost.getElementsByTagName('div')[0];
+
+
+                    this.elUnitWrap.appendChild(domUnitPost);
                     this.persistValueToDB('post');
                     // Resetting the values
                     title.value = '';
