@@ -1,17 +1,12 @@
 define(['javascripts/firebaseDB.js', 'javascripts/comment.js', 'javascripts/util.js'], function (config, commentObject, util) {
     class Post {
         constructor() {
-            this.reddit = document.querySelector('#reddit');
-            this.elTopSection = this.reddit.querySelector('.top-section');
-            this.elButtonPost = this.elTopSection.querySelector('.post');
-            this.elUnitWrap = this.reddit.querySelector('.unit-wrap');
-
             this.attachEvent();
             this.populateAllPost();
         }
 
         attachEvent() {
-            this.elUnitWrap.addEventListener('click', this.findClick.bind(this));
+            util.myUtil.elUnitWrap.addEventListener('click', this.findClick.bind(this));
         }
 
         findClick(evt) {
@@ -59,7 +54,7 @@ define(['javascripts/firebaseDB.js', 'javascripts/comment.js', 'javascripts/util
                         domUnitPost.querySelector('.title').innerHTML = storeObj[i].title;
                         domUnitPost.querySelector('.description').innerHTML = storeObj[i].description;
 
-                        that.elUnitWrap.appendChild(domUnitPost); // Create post
+                        util.myUtil.elUnitWrap.appendChild(domUnitPost); // Create post
 
                         // For comments
                         if (storeObj[i].comments) {

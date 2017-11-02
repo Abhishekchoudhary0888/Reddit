@@ -1,16 +1,11 @@
 define(['javascripts/firebaseDB.js', 'javascripts/util.js'], function (config, util) {
     class Comment1 {
         constructor() {
-            this.reddit = document.querySelector('#reddit');
-            this.elTopSection = this.reddit.querySelector('.top-section');
-            this.elButtonPost = this.elTopSection.querySelector('.post');
-            this.elUnitWrap = this.reddit.querySelector('.unit-wrap');
-
             this.attachEvent();
         }
 
         attachEvent() {
-            this.elUnitWrap.addEventListener('click', this.findClick.bind(this));
+            util.myUtil.elUnitWrap.addEventListener('click', this.findClick.bind(this));
         }
 
         findClick(evt) {

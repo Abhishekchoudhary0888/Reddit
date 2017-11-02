@@ -2,17 +2,11 @@ define(['javascripts/firebaseDB.js', 'javascripts/post.js', 'javascripts/util.js
 
     class Reddit {
         constructor() {
-            this.reddit = document.querySelector('#reddit');
-            this.elTopSection = this.reddit.querySelector('.top-section');
-            this.elButtonPost = this.elTopSection.querySelector('.post');
-            this.elUnitWrap = this.reddit.querySelector('.unit-wrap');
-
             this.attachEvents();
         }
 
-
         attachEvents() {
-            this.elButtonPost.addEventListener('click', this.postBtnClickListener.bind(this));
+            util.myUtil.elButtonPost.addEventListener('click', this.postBtnClickListener.bind(this));
         }
 
         persistValueToDB(chk) {
@@ -34,8 +28,8 @@ define(['javascripts/firebaseDB.js', 'javascripts/post.js', 'javascripts/util.js
         }
 
         postBtnClickListener() {
-            var title = this.elTopSection.querySelector('.input-title'),
-                description = this.elTopSection.querySelector('.textarea-msg');
+            var title = util.myUtil.elTopSection.querySelector('.input-title'),
+                description = util.myUtil.elTopSection.querySelector('.textarea-msg');
 
             util.myUtil.obj.title = title.value;
             util.myUtil.obj.description = description.value;
@@ -47,7 +41,7 @@ define(['javascripts/firebaseDB.js', 'javascripts/post.js', 'javascripts/util.js
                 domUnitPost = domUnitPost.getElementsByTagName('div')[0];
 
 
-                this.elUnitWrap.appendChild(domUnitPost);
+                util.myUtil.elUnitWrap.appendChild(domUnitPost);
                 this.persistValueToDB('post');
                 // Resetting the values
                 title.value = '';
