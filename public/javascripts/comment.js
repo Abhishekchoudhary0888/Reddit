@@ -6,16 +6,6 @@ define(['javascripts/firebaseDB.js'], function (config) {
             this.elButtonPost = this.elTopSection.querySelector('.post');
             this.elUnitWrap = this.reddit.querySelector('.unit-wrap');
 
-            this.obj = {};
-            this.elTarget = null;
-            this.elCount = 0;
-            this.commentVal = null;
-            this.commentObj = {};
-            this.targetRepDiv = null;
-            this.replySpanDom = null;
-            this.targetId;
-            this.unitId;
-
            // this.attachEvent();
         }
 

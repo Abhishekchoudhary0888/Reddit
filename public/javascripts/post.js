@@ -6,7 +6,7 @@ define(['javascripts/firebaseDB.js', 'javascripts/comment.js', 'javascripts/util
             this.elButtonPost = this.elTopSection.querySelector('.post');
             this.elUnitWrap = this.reddit.querySelector('.unit-wrap');
 
-           // this.attachEvent();
+            this.attachEvent();
            // this.populateAllPost();
         }
 
@@ -15,14 +15,14 @@ define(['javascripts/firebaseDB.js', 'javascripts/comment.js', 'javascripts/util
         }
 
         findClick(evt) {
-            this.elTarget = evt.target;
+            util.myUtil.elTarget = evt.target;
 
-            if (this.elTarget.classList.contains('upvote')) {
-                this.updateVoteValueFn(this.elTarget, 1);
+            if (util.myUtil.elTarget.classList.contains('upvote')) {
+                this.updateVoteValueFn(util.myUtil.elTarget, 1);
             }
 
-            if (this.elTarget.classList.contains('downvote')) {
-                this.updateVoteValueFn(this.elTarget, -1);
+            if (util.myUtil.elTarget.classList.contains('downvote')) {
+                this.updateVoteValueFn(util.myUtil.elTarget, -1);
             }
         }
 
@@ -112,14 +112,14 @@ define(['javascripts/firebaseDB.js', 'javascripts/comment.js', 'javascripts/util
             var database = firebase.database();
 
             if (chk == 'count') {
-                database.ref('Post/' + this.targetId).update({
-                    voteCount: this.elCount
+                database.ref('Post/' + util.myUtil.targetId).update({
+                    voteCount: util.myUtil.elCount
                 });
             } else if (chk == 'commentVal') {
-                database.ref('Post/' + this.targetId + '/comments/' + this.unitId).update({
-                    id: this.unitId,
-                    comment: this.commentObj.comment,
-                    parentId: this.commentObj.parrentid
+                database.ref('Post/' + util.myUtil.targetId + '/comments/' + util.myUtil.unitId).update({
+                    id: util.myUtil.unitId,
+                    comment: util.myUtil.commentObj.comment,
+                    parentId: util.myUtil.commentObj.parrentid
                 });
             }
         }
@@ -147,10 +147,10 @@ define(['javascripts/firebaseDB.js', 'javascripts/comment.js', 'javascripts/util
 
             if (!parentDiv.classList.contains('voted')) {
                 parentDiv.classList.add('voted');
-                this.targetId = parentDiv.id;
+                util.myUtil.targetId = parentDiv.id;
 
-                this.elCount = eval(elVote.innerHTML) + vote;
-                elVote.innerHTML = this.elCount;
+                util.myUtil.elCount = eval(elVote.innerHTML) + vote;
+                elVote.innerHTML = util.myUtil.elCount;
 
                 this.persistValueToDB('count');
             }
