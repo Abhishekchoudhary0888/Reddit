@@ -7,7 +7,7 @@ define(['javascripts/firebaseDB.js', 'javascripts/comment.js', 'javascripts/util
             this.elUnitWrap = this.reddit.querySelector('.unit-wrap');
 
             this.attachEvent();
-           // this.populateAllPost();
+            this.populateAllPost();
         }
 
         attachEvent() {
@@ -47,8 +47,8 @@ define(['javascripts/firebaseDB.js', 'javascripts/comment.js', 'javascripts/util
                         var k = content[keys[i]];
                         storeObj.push(k);
                     }
-
                     storeObj = that.sortStoreObj(storeObj);
+
                     for (var i = 0; i < storeObj.length; i++) {
                         var domUnitPost = document.createElement('div');
                         domUnitPost.innerHTML = that.createPostFn();
@@ -71,11 +71,11 @@ define(['javascripts/firebaseDB.js', 'javascripts/comment.js', 'javascripts/util
 
                                 if (dom.classList.contains('unit')) {
                                     var allComments = domUnitPost.querySelector('.all-comments');
-                                    var commentUnit = that.createCommentUnitFn(tempObj.comment);
+                                    var commentUnit = commentObject.mycomment.createCommentUnitFn(tempObj.comment);
                                     commentUnit.id = tempObj.id;
                                     allComments.appendChild(commentUnit);
                                 } else if (dom.classList.contains('comment-unit')) {
-                                    var commentUnit = that.createCommentUnitFn(tempObj.comment);
+                                    var commentUnit = commentObject.mycomment.createCommentUnitFn(tempObj.comment);
                                     commentUnit.id = tempObj.id;
                                     dom.appendChild(commentUnit);
                                 }
@@ -114,12 +114,6 @@ define(['javascripts/firebaseDB.js', 'javascripts/comment.js', 'javascripts/util
             if (chk == 'count') {
                 database.ref('Post/' + util.myUtil.targetId).update({
                     voteCount: util.myUtil.elCount
-                });
-            } else if (chk == 'commentVal') {
-                database.ref('Post/' + util.myUtil.targetId + '/comments/' + util.myUtil.unitId).update({
-                    id: util.myUtil.unitId,
-                    comment: util.myUtil.commentObj.comment,
-                    parentId: util.myUtil.commentObj.parrentid
                 });
             }
         }

@@ -1,4 +1,4 @@
-define(['javascripts/firebaseDB.js'], function (config) {
+define(['javascripts/firebaseDB.js', 'javascripts/util.js'], function (config, util) {
     class Comment1 {
         constructor() {
             this.reddit = document.querySelector('#reddit');
@@ -6,7 +6,7 @@ define(['javascripts/firebaseDB.js'], function (config) {
             this.elButtonPost = this.elTopSection.querySelector('.post');
             this.elUnitWrap = this.reddit.querySelector('.unit-wrap');
 
-           // this.attachEvent();
+            this.attachEvent();
         }
 
         attachEvent() {
@@ -14,44 +14,59 @@ define(['javascripts/firebaseDB.js'], function (config) {
         }
 
         findClick(evt) {
-            this.elTarget = evt.target;
+            util.myUtil.elTarget = evt.target;
 
-            if (this.elTarget.classList.contains('save-btn')) {
-                this.addCommentBlock(this.elTarget);
+            if (util.myUtil.elTarget.classList.contains('save-btn')) {
+                this.addCommentBlock(util.myUtil.elTarget);
             }
 
-            if (this.elTarget.classList.contains('reply-comment')) {
-                this.replyCommentsFn(this.elTarget);
+            if (util.myUtil.elTarget.classList.contains('reply-comment')) {
+                this.replyCommentsFn(util.myUtil.elTarget);
             }
 
-            if (this.elTarget.classList.contains('save-comment')) {
-                this.updateCommentOnReply(this.elTarget);
+            if (util.myUtil.elTarget.classList.contains('save-comment')) {
+                this.updateCommentOnReply(util.myUtil.elTarget);
             }
 
-            if (this.elTarget.classList.contains('cancel-comment')) {
-                this.cancelCommentBlockFn(this.elTarget);
+            if (util.myUtil.elTarget.classList.contains('cancel-comment')) {
+                this.cancelCommentBlockFn(util.myUtil.elTarget);
             }
         }
 
         addCommentBlock(evt) {
             var ancestor = this.findAncestor(evt, 'unit');
             var elCommentBox = evt.parentElement.querySelector('.comment-box');
-            this.commentVal = elCommentBox.value;
+            util.myUtil.commentVal = elCommentBox.value;
 
             if (elCommentBox.value) {
-                var commentUnit = this.createCommentUnitFn(this.commentVal);
+                var commentUnit = this.createCommentUnitFn(util.myUtil.commentVal);
 
                 elCommentBox.value = '';
 
                 var elAllComments = evt.parentElement.querySelector('.all-comments');
                 elAllComments.appendChild(commentUnit);
 
-                this.unitId = commentUnit.id;
-                this.targetId = ancestor.id;
-                this.commentObj.comment = this.commentVal;
-                this.commentObj.parrentid = evt.parentElement.parentElement.id;
+                util.myUtil.unitId = commentUnit.id;
+                util.myUtil.targetId = ancestor.id;
+                util.myUtil.commentObj.comment = util.myUtil.commentVal;
+                util.myUtil.commentObj.parrentid = evt.parentElement.parentElement.id;
 
                 this.persistValueToDB('commentVal');
+            }
+        }
+
+        persistValueToDB(chk) {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(config.config);
+            }
+
+            var database = firebase.database();
+            if (chk == 'commentVal') {
+                database.ref('Post/' + util.myUtil.targetId + '/comments/' + util.myUtil.unitId).update({
+                    id: util.myUtil.unitId,
+                    comment: util.myUtil.commentObj.comment,
+                    parentId: util.myUtil.commentObj.parrentid
+                });
             }
         }
 
@@ -78,8 +93,8 @@ define(['javascripts/firebaseDB.js'], function (config) {
 
         replyCommentsFn(el) {
             this.replySpanDom = el;
-            this.targetId = this.findAncestor(el, 'unit').id;
-            var outerDiv = this.targetRepDiv = el.parentElement;
+            util.myUtil.targetId = this.findAncestor(el, 'unit').id;
+            var outerDiv = util.myUtil.targetRepDiv = el.parentElement;
             var commentBlock = this.createCommentBlock();
 
             outerDiv.appendChild(commentBlock);
@@ -100,13 +115,13 @@ define(['javascripts/firebaseDB.js'], function (config) {
                 var commentBlock = this.createCommentUnitFn(textAreaValue);
                 outerWrap.appendChild(commentBlock);
                 el.parentElement.remove();
-                this.replySpanDom.remove();
+               // util.myUtil.replySpanDom.remove();
             }
 
-            this.commentObj.comment = textAreaValue;
-            this.commentObj.parrentid = this.targetRepDiv.id;
-            this.unitId = commentBlock.id;
-            this.targetId = ancestor.id;
+            util.myUtil.commentObj.comment = textAreaValue;
+            util.myUtil.commentObj.parrentid = util.myUtil.targetRepDiv.id;
+            util.myUtil.unitId = commentBlock.id;
+            util.myUtil.targetId = ancestor.id;
 
             this.persistValueToDB('commentVal');
         }
