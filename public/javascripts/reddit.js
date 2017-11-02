@@ -1,4 +1,4 @@
-define(['javascripts/firebaseDB.js', 'javascripts/post.js'], function (config, mypost) {
+define(['javascripts/firebaseDB.js', 'javascripts/post.js', 'javascripts/util.js'], function (config, mypost, util) {
 
     class Reddit {
         constructor() {
@@ -23,12 +23,12 @@ define(['javascripts/firebaseDB.js', 'javascripts/post.js'], function (config, m
             var database = firebase.database();
 
             if (chk == 'post') {
-                database.ref('Post/' + mypost.mypost.targetId).set(
+                database.ref('Post/' + util.myUtil.targetId).set(
                     {
-                        title: mypost.mypost.obj.title,
-                        description: mypost.mypost.obj.description,
-                        id: mypost.mypost.targetId,
-                        voteCount: mypost.mypost.obj.voteCount
+                        title: util.myUtil.obj.title,
+                        description: util.myUtil.obj.description,
+                        id: util.myUtil.targetId,
+                        voteCount: util.myUtil.obj.voteCount
                     });
             }
         }
@@ -37,9 +37,9 @@ define(['javascripts/firebaseDB.js', 'javascripts/post.js'], function (config, m
             var title = this.elTopSection.querySelector('.input-title'),
                 description = this.elTopSection.querySelector('.textarea-msg');
 
-            mypost.mypost.obj.title = title.value;
-            mypost.mypost.obj.description = description.value;
-            mypost.mypost.obj.voteCount = 0;
+            util.myUtil.obj.title = title.value;
+            util.myUtil.obj.description = description.value;
+            util.myUtil.obj.voteCount = 0;
 
             if (title.value) {
                 var domUnitPost = document.createElement('div');
@@ -52,7 +52,7 @@ define(['javascripts/firebaseDB.js', 'javascripts/post.js'], function (config, m
                 // Resetting the values
                 title.value = '';
                 description.value = '';
-                mypost.mypost.obj = {};
+                util.myUtil.obj = {};
             }
         }
     }

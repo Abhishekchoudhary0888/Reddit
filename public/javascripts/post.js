@@ -1,4 +1,4 @@
-define(['javascripts/firebaseDB.js'], function (config) {
+define(['javascripts/firebaseDB.js', 'javascripts/comment.js', 'javascripts/util.js'], function (config, commentObject, util) {
     class Post {
         constructor() {
             this.reddit = document.querySelector('#reddit');
@@ -6,18 +6,8 @@ define(['javascripts/firebaseDB.js'], function (config) {
             this.elButtonPost = this.elTopSection.querySelector('.post');
             this.elUnitWrap = this.reddit.querySelector('.unit-wrap');
 
-            this.obj = {};
-            this.elTarget = null;
-            this.elCount = 0;
-            this.commentVal = null;
-            this.commentObj = {};
-            this.targetRepDiv = null;
-            this.replySpanDom = null;
-            this.targetId;
-            this.unitId;
-
-            this.attachEvent();
-            this.populateAllPost();
+           // this.attachEvent();
+           // this.populateAllPost();
         }
 
         attachEvent() {
@@ -34,24 +24,7 @@ define(['javascripts/firebaseDB.js'], function (config) {
             if (this.elTarget.classList.contains('downvote')) {
                 this.updateVoteValueFn(this.elTarget, -1);
             }
-
-            if (this.elTarget.classList.contains('save-btn')) {
-                this.addCommentBlock(this.elTarget);
-            }
-
-            if (this.elTarget.classList.contains('reply-comment')) {
-                this.replyCommentsFn(this.elTarget);
-            }
-
-            if (this.elTarget.classList.contains('save-comment')) {
-                this.updateCommentOnReply(this.elTarget);
-            }
-
-            if (this.elTarget.classList.contains('cancel-comment')) {
-                this.cancelCommentBlockFn(this.elTarget);
-            }
         }
-
 
         populateAllPost() {
             var that = this,
@@ -89,28 +62,29 @@ define(['javascripts/firebaseDB.js'], function (config) {
                         that.elUnitWrap.appendChild(domUnitPost); // Create post
 
                         // For comments
-                        var commentObj = Object.keys(storeObj[i].comments);
-                        for (var j = 0; j < commentObj.length; j++) {
-                            var tempObj = storeObj[i].comments[commentObj[j]];
+                        if (storeObj[i].comments) {
+                            var commentObj = Object.keys(storeObj[i].comments);
+                            for (var j = 0; j < commentObj.length; j++) {
+                                var tempObj = storeObj[i].comments[commentObj[j]];
 
-                            var dom = document.querySelector('[id="' + tempObj.parentId + '"]');
+                                var dom = document.querySelector('[id="' + tempObj.parentId + '"]');
 
-                            if (dom.classList.contains('unit')) {
-                                var allComments = domUnitPost.querySelector('.all-comments');
-                                var commentUnit = that.createCommentUnitFn(tempObj.comment);
-                                commentUnit.id = tempObj.id;
-                                allComments.appendChild(commentUnit);
-                            } else if (dom.classList.contains('comment-unit')) {
-                                var commentUnit = that.createCommentUnitFn(tempObj.comment);
-                                commentUnit.id = tempObj.id;
-                                dom.appendChild(commentUnit);
+                                if (dom.classList.contains('unit')) {
+                                    var allComments = domUnitPost.querySelector('.all-comments');
+                                    var commentUnit = that.createCommentUnitFn(tempObj.comment);
+                                    commentUnit.id = tempObj.id;
+                                    allComments.appendChild(commentUnit);
+                                } else if (dom.classList.contains('comment-unit')) {
+                                    var commentUnit = that.createCommentUnitFn(tempObj.comment);
+                                    commentUnit.id = tempObj.id;
+                                    dom.appendChild(commentUnit);
+                                }
                             }
                         }
                     }
                 }
             });
         }
-
 
         sortStoreObj(storeObj) {
             var obj = [];
@@ -150,76 +124,21 @@ define(['javascripts/firebaseDB.js'], function (config) {
             }
         }
 
-
         createPostFn() {
-
-            this.targetId = Date.now() + Math.round(Math.random());
-            this.obj.id = this.targetId;
+            util.myUtil.targetId = Date.now() + Math.round(Math.random());
+            util.myUtil.obj.id = util.myUtil.targetId;
 
             var obj = {
-                id: this.obj.id,
+                id: util.myUtil.obj.id,
                 vote: 0,
-                title: this.obj.title,
-                description: this.obj.description
+                title: util.myUtil.obj.title,
+                description: util.myUtil.obj.description
             };
 
             var template = document.getElementById('listContainer').innerHTML;
             var output = Mustache.render(template, obj);
 
             return output;
-        }
-
-
-        addCommentBlock(evt) {
-            var ancestor = this.findAncestor(evt, 'unit');
-            var elCommentBox = evt.parentElement.querySelector('.comment-box');
-            this.commentVal = elCommentBox.value;
-
-            if (elCommentBox.value) {
-                var commentUnit = this.createCommentUnitFn(this.commentVal);
-
-                elCommentBox.value = '';
-
-                var elAllComments = evt.parentElement.querySelector('.all-comments');
-                elAllComments.appendChild(commentUnit);
-
-                this.unitId = commentUnit.id;
-                this.targetId = ancestor.id;
-                this.commentObj.comment = this.commentVal;
-                this.commentObj.parrentid = evt.parentElement.parentElement.id;
-
-                this.persistValueToDB('commentVal');
-            }
-        }
-
-        createCommentBlock() {
-            var outerDiv = this.createDomElementFunction('div', 'reply-comment-box');
-
-            var elTextBox = this.createDomElementFunction('textarea');
-            outerDiv.appendChild(elTextBox);
-
-            var elSave = this.createDomElementFunction('span', 'save-comment', '', 'Save');
-            outerDiv.appendChild(elSave);
-
-            var elCancel = this.createDomElementFunction('span', 'cancel-comment', '', 'Cancel');
-            outerDiv.appendChild(elCancel);
-
-            return outerDiv;
-        }
-
-
-        findAncestor(el, cls) {
-            while ((el = el.parentElement) && !el.classList.contains(cls));
-            return el;
-        }
-
-        replyCommentsFn(el) {
-            this.replySpanDom = el;
-            this.targetId = this.findAncestor(el, 'unit').id;
-            var outerDiv = this.targetRepDiv = el.parentElement;
-            var commentBlock = this.createCommentBlock();
-
-            outerDiv.appendChild(commentBlock);
         }
 
         updateVoteValueFn(el, vote) {
@@ -236,56 +155,11 @@ define(['javascripts/firebaseDB.js'], function (config) {
                 this.persistValueToDB('count');
             }
         }
-        
-        cancelCommentBlockFn(el) {
-            el.parentElement.remove();
-        }
-
-
-        updateCommentOnReply(el) {
-            var ancestor = this.findAncestor(el, 'unit');
-
-            var outerWrap = el.parentElement.parentElement;
-            var textAreaValue = outerWrap.querySelector('textarea').value;
-
-            if (textAreaValue) {
-                var commentBlock = this.createCommentUnitFn(textAreaValue);
-                outerWrap.appendChild(commentBlock);
-                el.parentElement.remove();
-                this.replySpanDom.remove();
-            }
-
-            this.commentObj.comment = textAreaValue;
-            this.commentObj.parrentid = this.targetRepDiv.id;
-            this.unitId = commentBlock.id;
-            this.targetId = ancestor.id;
-
-            this.persistValueToDB('commentVal');
-        }
-
-        createCommentUnitFn(value) {
-            var commentUnit = this.createDomElementFunction('div', 'comment-unit', Date.now() + Math.round(Math.random()), value);
-
-            var elReply = this.createDomElementFunction('span', 'reply-comment', '', 'Reply');
-            commentUnit.appendChild(elReply);
-
-            return commentUnit;
-        }
-
-        createDomElementFunction(el, elClassName, elIdName, elText) {
-            var elDom = document.createElement(el);
-
-            elClassName ? elDom.classList.add(elClassName) : '';
-            elIdName ? (elDom.id = elIdName) : '';
-            elText ? (elDom.innerHTML = elText) : '';
-
-            return elDom;
-        }
-
     }
 
-    var mypost = new Post();
-    return {
-        mypost: mypost
-    }
-});
+var mypost = new Post();
+return {
+    mypost: mypost
+}
+})
+;
