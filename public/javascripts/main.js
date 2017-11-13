@@ -7,10 +7,12 @@
 define([
     "dojo/_base/declare",
     "dijit/_WidgetBase",
-    "dijit/_Templated"/*,
-    "dojo/domReady!"*/
-], function (declare, _WidgetBase, _Templated) {
+    "dijit/_Templated",
+    "./util"
+], function (declare, _WidgetBase, _Templated, util) {
     alert("hmm");
+    console.log(new util());
+    debugger;
 
     // var widgetClass = declare([_WidgetBase, _Templated], {
     //     templateString: buttonTemplate,
