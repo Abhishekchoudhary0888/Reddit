@@ -1,17 +1,17 @@
 <div class="wrapper">
-    <div class="top-section">
+    <div class="top-section" data-dojo-attach-point="top-section">
         <div class="post-block">
             <h2>Add a new Post</h2>
-            <input class="input-title" type="text" value="" placeholder="Enter title"/>
-                <textarea class="textarea-msg" type="text" value="Enter Message"
+            <input data-dojo-attach-point="inputTitle" class="input-title" type="text" value="" placeholder="Enter title"/>
+                <textarea data-dojo-attach-point="textareaMsg" class="textarea-msg" type="text" value="Enter Message"
                           placeholder="Enter Message"> </textarea>
-            <button class="post">Post</button>
+            <button class="post" dojoAttachEvent ="mouseup: postbtnClicked" data-dojo-attach-point="postBtn">Post</button>
         </div>
         <a href="/logout" class="logout">Logout</a>
     </div>
 
     <div class="main-section">
         <h2>All Post:</h2>
-        <div class="unit-wrap"></div>
+        <div data-dojo-attach-point="unitWrap" class="unit-wrap"></div>
     </div>
 </div>

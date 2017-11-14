@@ -31,9 +31,9 @@ define([
     "dojo/_base/declare",
     "dijit/_Widget"
 ], function (declare, _Widget) {
-    return declare([_Widget], {
+    var util = declare([_Widget], {
         reddit: document.querySelector('#reddit'),
-        elTopSection: reddit.querySelector('.top-section'),
+        elTopSection: "top-section",
         elButtonPost: reddit.querySelector('.post'),
         elUnitWrap: reddit.querySelector('.unit-wrap'),
         obj: {},
@@ -44,7 +44,26 @@ define([
         targetRepDiv: null,
         replySpanDom: null,
         targetId: null,
-        unitId: null
+        unitId: null,
+        persistValueToDB: function (chk) {
+
+            if (!firebase.apps.length) {
+                firebase.initializeApp(config.config);
+            }
+
+            var database = firebase.database();
+
+            if (chk == 'post') {
+                database.ref('Post/' + util.targetId).set(
+                    {
+                        title: util.obj.title,
+                        description: util.obj.description,
+                        id: util.targetId,
+                        voteCount: util.obj.voteCount
+                    });
+            }
+        }
     });
 
+    return new util();
 });

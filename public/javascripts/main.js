@@ -1,9 +1,3 @@
-// require(['javascripts/reddit.js'], function (reddit) {
-//
-//    //new reddit.reddit();
-//
-// });
-
 define([
     "dojo/_base/declare",
     "dijit/_WidgetBase",
@@ -12,18 +6,31 @@ define([
     "./util"
 ], function (declare, _WidgetBase, _Templated, TopSectionTemplate, util) {
 
-    var postWidget = declare([_WidgetBase, _Templated], {
-        templateString: TopSectionTemplate
-    });
-    // var widgetClass = declare([_WidgetBase, _Templated], {
-    //     templateString: buttonTemplate,
-    //     onClicked: function () {
-    //         var widget = new MyScript();
-    //         widget.placeAt(this.bottomBlock);
-    //     }
-    // });
+    var redditWidget = declare([_WidgetBase, _Templated], {
+        templateString: TopSectionTemplate,
 
-     new postWidget().placeAt(document.querySelector('#reddit'));
+        postbtnClicked: function () {
+            alert('indise');
+            util.obj.title = this.inputTitle.value;
+            util.obj.description = this.textareaMsg.value;
+            util.obj.voteCount = 0;
+
+            if (this.inputTitle.value) {
+                var domUnitPost = document.createElement('div');
+                // domUnitPost.innerHTML = mypost.mypost.createPostFn();
+                domUnitPost = domUnitPost.getElementsByTagName('div')[0];
+
+                this.unitWrap.append(domUnitPost);
+                util.persistValueToDB('post');
+                // Resetting the values
+                inputTitle.value = '';
+                textareaMsg.value = '';
+                util.obj = {};
+            }
+        }
+    });
+
+    new redditWidget().placeAt(document.querySelector('#reddit'));
 });
 
 
