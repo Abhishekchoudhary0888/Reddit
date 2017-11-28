@@ -1,154 +1,36 @@
-define(['javascripts/firebaseDB.js', 'javascripts/comment.js', 'javascripts/util.js'], function (config, commentObject, util) {
-    class Post {
-        constructor() {
-            this.attachEvent();
-            this.populateAllPost();
-        }
+define([
+    "dojo/_base/declare",
+    "dijit/_WidgetBase",
+    "dijit/_Templated",
+    "dojo/text!./template/topsection.ejs",
+    "./util",
+    "./post"
+], function (declare, _WidgetBase, _Templated, TopSectionTemplate, util, post) {
 
-        attachEvent() {
-            util.myUtil.elUnitWrap.addEventListener('click', this.findClick.bind(this));
-        }
+    var redditWidget = declare([_WidgetBase, _Templated], {
+        templateString: TopSectionTemplate,
 
-        findClick(evt) {
-            util.myUtil.elTarget = evt.target;
+        postbtnClicked: function () {
+            utilBase = new util();
 
-            if (util.myUtil.elTarget.classList.contains('upvote')) {
-                this.updateVoteValueFn(util.myUtil.elTarget, 1);
-            }
+            utilBase.set_obj_title(this.inputTitle.value);
+            utilBase.set_obj_description(this.textareaMsg.value);
+            utilBase.set_obj_voteCount(0);
 
-            if (util.myUtil.elTarget.classList.contains('downvote')) {
-                this.updateVoteValueFn(util.myUtil.elTarget, -1);
-            }
-        }
+            if (this.inputTitle.value) {
+                var domUnitPost = document.createElement('div');
+                // domUnitPost.innerHTML = mypost.mypost.createPostFn();
+                domUnitPost = domUnitPost.getElementsByTagName('div')[0];
 
-        populateAllPost() {
-            var that = this,
-                storeObj = [];
-
-            if (!firebase.apps.length) {
-                firebase.initializeApp(config.config);
-            }
-
-            var database = firebase.database();
-            var postRef = database.ref('Post');
-
-            postRef.once('value').then(function (obj) {
-                var content = obj.val();
-
-                if (content) {
-                    var keys = Object.keys(content);
-
-                    for (var i = 0; i < keys.length; i++) {
-                        var k = content[keys[i]];
-                        storeObj.push(k);
-                    }
-                    storeObj = that.sortStoreObj(storeObj);
-
-                    for (var i = 0; i < storeObj.length; i++) {
-                        var domUnitPost = document.createElement('div');
-                        domUnitPost.innerHTML = that.createPostFn();
-                        domUnitPost = domUnitPost.getElementsByTagName('div')[0];
-
-                        domUnitPost.querySelector('.vote').innerHTML = storeObj[i].voteCount ? storeObj[i].voteCount : 0;
-                        domUnitPost.id = storeObj[i].id;
-                        domUnitPost.querySelector('.title').innerHTML = storeObj[i].title;
-                        domUnitPost.querySelector('.description').innerHTML = storeObj[i].description;
-
-                        util.myUtil.elUnitWrap.appendChild(domUnitPost); // Create post
-
-                        // For comments
-                        if (storeObj[i].comments) {
-                            var commentObj = Object.keys(storeObj[i].comments);
-                            for (var j = 0; j < commentObj.length; j++) {
-                                var tempObj = storeObj[i].comments[commentObj[j]];
-
-                                var dom = document.querySelector('[id="' + tempObj.parentId + '"]');
-
-                                if (dom.classList.contains('unit')) {
-                                    var allComments = domUnitPost.querySelector('.all-comments');
-                                    var commentUnit = commentObject.mycomment.createCommentUnitFn(tempObj.comment);
-                                    commentUnit.id = tempObj.id;
-                                    allComments.appendChild(commentUnit);
-                                } else if (dom.classList.contains('comment-unit')) {
-                                    var commentUnit = commentObject.mycomment.createCommentUnitFn(tempObj.comment);
-                                    commentUnit.id = tempObj.id;
-                                    dom.appendChild(commentUnit);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        sortStoreObj(storeObj) {
-            var obj = [];
-            for (var i = 0; i < storeObj.length; i++) {
-                obj.push(storeObj[i]);
-            }
-
-            for (var i = 0; i < obj.length; i++) {
-                for (var j = i + 1; j < obj.length; j++) {
-                    if (obj[i].voteCount < obj[j].voteCount) {
-                        var d = obj[j];
-                        obj[j] = obj[i];
-                        obj[i] = d;
-                    }
-                }
-            }
-            return obj;
-        }
-
-        persistValueToDB(chk) {
-            if (!firebase.apps.length) {
-                firebase.initializeApp(config.config);
-            }
-
-            var database = firebase.database();
-
-            if (chk == 'count') {
-                database.ref('Post/' + util.myUtil.targetId).update({
-                    voteCount: util.myUtil.elCount
-                });
+                this.unitWrap.append(domUnitPost);
+                util.persistValueToDB('post');
+                // Resetting the values
+                inputTitle.value = '';
+                textareaMsg.value = '';
+                utilBase.reset_obj();
             }
         }
+    });
 
-        createPostFn() {
-            util.myUtil.targetId = Date.now() + Math.round(Math.random());
-            util.myUtil.obj.id = util.myUtil.targetId;
-
-            var obj = {
-                id: util.myUtil.obj.id,
-                vote: 0,
-                title: util.myUtil.obj.title,
-                description: util.myUtil.obj.description
-            };
-
-            var template = document.getElementById('listContainer').innerHTML;
-            var output = Mustache.render(template, obj);
-
-            return output;
-        }
-
-        updateVoteValueFn(el, vote) {
-            var elVote = el.parentElement.querySelector('.vote'),
-                parentDiv = elVote.parentElement.parentElement;
-
-            if (!parentDiv.classList.contains('voted')) {
-                parentDiv.classList.add('voted');
-                util.myUtil.targetId = parentDiv.id;
-
-                util.myUtil.elCount = eval(elVote.innerHTML) + vote;
-                elVote.innerHTML = util.myUtil.elCount;
-
-                this.persistValueToDB('count');
-            }
-        }
-    }
-
-var mypost = new Post();
-return {
-    mypost: mypost
-}
-})
-;
+    new redditWidget().placeAt(document.querySelector('#reddit'));
+});

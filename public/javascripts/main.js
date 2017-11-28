@@ -3,17 +3,19 @@ define([
     "dijit/_WidgetBase",
     "dijit/_Templated",
     "dojo/text!./template/topsection.ejs",
-    "./util"
-], function (declare, _WidgetBase, _Templated, TopSectionTemplate, util) {
+    "./util",
+    "./post"
+], function (declare, _WidgetBase, _Templated, TopSectionTemplate, util, post) {
 
     var redditWidget = declare([_WidgetBase, _Templated], {
         templateString: TopSectionTemplate,
 
         postbtnClicked: function () {
-            alert('indise');
-            util.obj.title = this.inputTitle.value;
-            util.obj.description = this.textareaMsg.value;
-            util.obj.voteCount = 0;
+            utilBase = new util();
+
+            utilBase.set_obj_title(this.inputTitle.value);
+            utilBase.set_obj_description(this.textareaMsg.value);
+            utilBase.set_obj_voteCount(0);
 
             if (this.inputTitle.value) {
                 var domUnitPost = document.createElement('div');
@@ -25,7 +27,7 @@ define([
                 // Resetting the values
                 inputTitle.value = '';
                 textareaMsg.value = '';
-                util.obj = {};
+                utilBase.reset_obj();
             }
         }
     });
