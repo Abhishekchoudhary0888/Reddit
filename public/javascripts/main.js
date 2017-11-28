@@ -4,8 +4,8 @@ define([
     "dijit/_Templated",
     "dojo/text!./template/topsection.ejs",
     "./util",
-    "./post"
-], function (declare, _WidgetBase, _Templated, TopSectionTemplate, util, post) {
+    "./firebaseDB"
+], function (declare, _WidgetBase, _Templated, TopSectionTemplate, util, config) {
 
     var redditWidget = declare([_WidgetBase, _Templated], {
         templateString: TopSectionTemplate,
@@ -23,11 +23,33 @@ define([
                 domUnitPost = domUnitPost.getElementsByTagName('div')[0];
 
                 this.unitWrap.append(domUnitPost);
-                util.persistValueToDB('post');
+
+               this.persistValueToDB('post');
+
                 // Resetting the values
                 inputTitle.value = '';
                 textareaMsg.value = '';
                 utilBase.reset_obj();
+            }
+        },
+
+        persistValueToDB: function (chk) {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(config.config);
+            }
+
+            var database = firebase.database();
+
+            utilBase = new util();
+
+            if (chk == 'post') {
+                database.ref('Post/' + utilBase.get_targetId()).set(
+                    {
+                        title: utilBase.get_obj().title,
+                        description: utilBase.get_obj().description,
+                        id: utilBase.get_targetId(),
+                        voteCount: utilBase.get_obj().voteCount
+                    });
             }
         }
     });
