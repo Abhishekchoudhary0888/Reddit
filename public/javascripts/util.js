@@ -37,5 +37,11 @@ define([
         set_targetId: function (updatedValue) {
             targetId = updatedValue;
         },
+        get_elCount : function () {
+            return elCount;
+        },
+        set_elCount : function (updatedValue) {
+            elCount = updatedValue
+        }
     });
 });

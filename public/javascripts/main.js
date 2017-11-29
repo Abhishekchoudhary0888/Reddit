@@ -5,7 +5,7 @@ define([
     "dojo/text!./template/topsection.ejs",
     "./util",
     "./firebaseDB",
-    "./post"
+    "./createpost"
 ], function (declare, _WidgetBase, _Templated, TopSectionTemplate, util, config, createPost) {
 
     var redditWidget = declare([_WidgetBase, _Templated], {
