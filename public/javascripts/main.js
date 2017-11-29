@@ -36,6 +36,90 @@ define([
             }
         },
 
+        populateAllPost: function () {
+            var that = this,
+                storeObj = [];
+
+            if (!firebase.apps.length) {
+                firebase.initializeApp(config.config);
+            }
+
+            var database = firebase.database();
+            var postRef = database.ref('Post');
+
+            postRef.once('value').then(function (obj) {
+                var content = obj.val();
+
+                if (content) {
+                    var keys = Object.keys(content);
+
+                    for (var i = 0; i < keys.length; i++) {
+                        var k = content[keys[i]];
+                        storeObj.push(k);
+                    }
+                    storeObj = that.sortStoreObj(storeObj);
+
+                    for (var i = 0; i < storeObj.length; i++) {
+
+                        var post = new createPost(),
+                            domUnitPost = document.createElement('div');
+
+                        post.placeAt(domUnitPost);
+                        domUnitPost = domUnitPost.getElementsByTagName('div')[0];
+
+
+                        post.unit.dataset.id = storeObj[i].id;
+                        post.vote.innerText = storeObj[i].voteCount ? storeObj[i].voteCount : 0;
+                        post.title.innerText = storeObj[i].title;
+                        post.description.innerText = storeObj[i].description;
+
+                        that.unitWrap.append(domUnitPost); // Create post
+
+                        // For comments
+                        //if (storeObj[i].comments) {
+                        if (false) {
+                            var commentObj = Object.keys(storeObj[i].comments);
+                            for (var j = 0; j < commentObj.length; j++) {
+                                var tempObj = storeObj[i].comments[commentObj[j]];
+
+                                var dom = document.querySelector('[id="' + tempObj.parentId + '"]');
+
+                                if (dom.classList.contains('unit')) {
+                                    var allComments = domUnitPost.querySelector('.all-comments');
+                                    var commentUnit = commentObject.mycomment.createCommentUnitFn(tempObj.comment);
+                                    commentUnit.id = tempObj.id;
+                                    allComments.appendChild(commentUnit);
+                                } else if (dom.classList.contains('comment-unit')) {
+                                    var commentUnit = commentObject.mycomment.createCommentUnitFn(tempObj.comment);
+                                    commentUnit.id = tempObj.id;
+                                    dom.appendChild(commentUnit);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        },
+
+        sortStoreObj: function (storeObj) {
+            var obj = [];
+            for (var i = 0; i < storeObj.length; i++) {
+                obj.push(storeObj[i]);
+            }
+
+            for (var i = 0; i < obj.length; i++) {
+                for (var j = i + 1; j < obj.length; j++) {
+                    if (obj[i].voteCount < obj[j].voteCount) {
+                        var d = obj[j];
+                        obj[j] = obj[i];
+                        obj[i] = d;
+                    }
+                }
+            }
+            return obj;
+        },
+
+
         persistValueToDB: function (chk) {
             if (!firebase.apps.length) {
                 firebase.initializeApp(config.config);
@@ -54,6 +138,10 @@ define([
                         voteCount: utilBase.get_obj().voteCount
                     });
             }
+        },
+        postCreate: function () {
+            this.populateAllPost();
+            this.inherited(arguments);
         }
     });
 
