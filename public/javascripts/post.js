@@ -2,35 +2,26 @@ define([
     "dojo/_base/declare",
     "dijit/_WidgetBase",
     "dijit/_Templated",
-    "dojo/text!./template/topsection.ejs",
-    "./util",
-    "./post"
-], function (declare, _WidgetBase, _Templated, TopSectionTemplate, util, post) {
+    "dojo/text!./template/postsection.ejs",
+    "./util"
+], function (declare, _WidgetBase, _Templated, postSectionTemplate, util) {
 
-    var redditWidget = declare([_WidgetBase, _Templated], {
-        templateString: TopSectionTemplate,
+    return declare([_WidgetBase, _Templated], {
+        templateString: postSectionTemplate,
 
-        postbtnClicked: function () {
+        postCreate: function () {
+            var id= Date.now() + Math.round(Math.random());
+
             utilBase = new util();
 
-            utilBase.set_obj_title(this.inputTitle.value);
-            utilBase.set_obj_description(this.textareaMsg.value);
-            utilBase.set_obj_voteCount(0);
+            utilBase.set_targetId(id);
+            utilBase.set_obj_id(id);
+            this.unit.dataset.id= id;
+            this.vote= 0;
+            this.title.innerText = utilBase.get_obj().title;
+            this.description.innerText = utilBase.get_obj().description;
 
-            if (this.inputTitle.value) {
-                var domUnitPost = document.createElement('div');
-                // domUnitPost.innerHTML = mypost.mypost.createPostFn();
-                domUnitPost = domUnitPost.getElementsByTagName('div')[0];
-
-                this.unitWrap.append(domUnitPost);
-                util.persistValueToDB('post');
-                // Resetting the values
-                inputTitle.value = '';
-                textareaMsg.value = '';
-                utilBase.reset_obj();
-            }
+            this.inherited(arguments);
         }
     });
-
-    new redditWidget().placeAt(document.querySelector('#reddit'));
 });

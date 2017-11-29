@@ -11,7 +11,7 @@ define([
             databaseURL: "https://login-7617e.firebaseio.com",
             projectId: "login-7617e",
             storageBucket: "login-7617e.appspot.com",
-            messagingSenderId: "870821907151",
+            messagingSenderId: "870821907151"
         }
     });
 

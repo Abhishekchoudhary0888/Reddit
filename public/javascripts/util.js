@@ -16,6 +16,9 @@ define([
         get_obj: function () {
             return obj;
         },
+        set_obj_id: function (updatedValue) {
+            obj.id= updatedValue;
+        },
         set_obj_title: function (updatedValue) {
             obj.title= updatedValue;
         },

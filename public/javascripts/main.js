@@ -4,8 +4,9 @@ define([
     "dijit/_Templated",
     "dojo/text!./template/topsection.ejs",
     "./util",
-    "./firebaseDB"
-], function (declare, _WidgetBase, _Templated, TopSectionTemplate, util, config) {
+    "./firebaseDB",
+    "./post"
+], function (declare, _WidgetBase, _Templated, TopSectionTemplate, util, config, createPost) {
 
     var redditWidget = declare([_WidgetBase, _Templated], {
         templateString: TopSectionTemplate,
@@ -18,17 +19,19 @@ define([
             utilBase.set_obj_voteCount(0);
 
             if (this.inputTitle.value) {
+                var post = new createPost();
+
                 var domUnitPost = document.createElement('div');
-                // domUnitPost.innerHTML = mypost.mypost.createPostFn();
+                post.placeAt(domUnitPost);
                 domUnitPost = domUnitPost.getElementsByTagName('div')[0];
 
                 this.unitWrap.append(domUnitPost);
 
-               this.persistValueToDB('post');
+                this.persistValueToDB('post');
 
                 // Resetting the values
-                inputTitle.value = '';
-                textareaMsg.value = '';
+                this.inputTitle.value = '';
+                this.textareaMsg.value = '';
                 utilBase.reset_obj();
             }
         },
