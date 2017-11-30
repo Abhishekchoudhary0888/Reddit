@@ -42,6 +42,33 @@ define([
         },
         set_elCount : function (updatedValue) {
             elCount = updatedValue
+        },
+        get_commentVal : function () {
+            return commentVal;
+        },
+        set_commentVal : function (updatedValue) {
+            commentVal = updatedValue
+        },
+        get_unitId : function () {
+            return unitId;
+        },
+        set_unitId : function (updatedValue) {
+            unitId = updatedValue
+        },
+        get_commentObj: function () {
+            return commentObj;
+        },
+        set_commentObj_comment: function (updatedValue) {
+            commentObj.comment= updatedValue;
+        },
+        set_commentObj_parrentid: function (updatedValue) {
+            commentObj.parrentid= updatedValue;
+        },
+        get_targetRepDiv : function () {
+            return targetRepDiv;
+        },
+        set_targetRepDiv : function (updatedValue) {
+            targetRepDiv = updatedValue
         }
     });
 });

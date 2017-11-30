@@ -3,12 +3,14 @@ define([
     "dijit/_WidgetBase",
     "dijit/_Templated",
     "dojo/text!./template/postsection.ejs",
-    "./util"
-], function (declare, _WidgetBase, _Templated, postSectionTemplate, util) {
+    "./util",
+    "./createCommentUnit"
+
+], function (declare, _WidgetBase, _Templated, postSectionTemplate, util, CommentUnit) {
 
     return declare([_WidgetBase, _Templated], {
         templateString: postSectionTemplate,
-        
+
         upVoteClicked: function () {
             this.updateVote(1);
         },
@@ -42,6 +44,32 @@ define([
                 database.ref('Post/' + utilBase.get_targetId()).update({
                     voteCount: utilBase.get_elCount()
                 });
+            } else if (chk == 'commentVal') {
+                database.ref('Post/' + utilBase.get_targetId() + '/comments/' + utilBase.get_unitId()).update({
+                    id: utilBase.get_unitId(),
+                    comment: utilBase.get_commentObj().comment
+                    //parentId: util.myUtil.commentObj.parrentid
+                });
+            }
+        },
+
+        commentSaveBtnOnClicked: function () {
+            utilBase.set_commentVal(this.commentTextArea.value);
+
+            if (this.commentTextArea.value) {
+               
+                var commentUnit = new CommentUnit({value: this.commentTextArea.value});
+
+
+
+                utilBase.set_unitId(commentUnit.commentUnitNode.getAttribute('data-id'));
+                utilBase.set_targetId(this.unit.getAttribute('data-id'));
+                utilBase.set_commentObj_comment(this.commentTextArea.value);
+                //utilBase.set_commentObj_parrentid(commentUnit.commentUnitNode.getAttribute('data-id'));
+
+                this.commentTextArea.value = '';
+                commentUnit.placeAt(this.allComment);
+                this.persistValueToDB('commentVal');
             }
         },
 

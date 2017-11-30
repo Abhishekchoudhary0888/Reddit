@@ -44,7 +44,7 @@ define(['javascripts/firebaseDB.js', 'javascripts/util.js'], function (config, u
                 util.myUtil.unitId = commentUnit.id;
                 util.myUtil.targetId = ancestor.id;
                 util.myUtil.commentObj.comment = util.myUtil.commentVal;
-                util.myUtil.commentObj.parrentid = evt.parentElement.parentElement.id;
+               // util.myUtil.commentObj.parrentid = evt.parentElement.parentElement.id;
 
                 this.persistValueToDB('commentVal');
             }
@@ -89,6 +89,7 @@ define(['javascripts/firebaseDB.js', 'javascripts/util.js'], function (config, u
         replyCommentsFn(el) {
             this.replySpanDom = el;
             util.myUtil.targetId = this.findAncestor(el, 'unit').id;
+            
             var outerDiv = util.myUtil.targetRepDiv = el.parentElement;
             var commentBlock = this.createCommentBlock();
 

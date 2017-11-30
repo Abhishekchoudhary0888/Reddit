@@ -8,7 +8,8 @@
         <p class="title" data-dojo-attach-point="title"></p>
         <p class="description" data-dojo-attach-point="description"></p>
         <div class="comment-txt">Comment section below</div>
-        <textarea class="comment-box"></textarea><span class="save-btn">Save</span>
-        <div class="all-comments"></div>
+        <textarea data-dojo-attach-point="commentTextArea" class="comment-box"></textarea>
+        <span data-dojo-attach-point="saveBtn" dojoAttachEvent="onclick: commentSaveBtnOnClicked" class="save-btn">Save</span>
+        <div class="all-comments" data-dojo-attach-point="allComment" ></div>
     </div>
 </div>

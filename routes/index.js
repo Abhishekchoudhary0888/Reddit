@@ -20,9 +20,12 @@ router.get('/home', function(req, res) {
 
 
 router.get('/logout', function(req, res) {
-  res.redirect("/login");
+  res.render("/login");
 });
 
+router.get('/public/javascripts/createpost.js', function(req, res) {
+  res.redirect("/login");
+});
 module.exports = router;
 
 // function isLoggedIn(req, res, next) {
