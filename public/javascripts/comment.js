@@ -105,6 +105,7 @@ define(['javascripts/firebaseDB.js', 'javascripts/util.js'], function (config, u
             var ancestor = this.findAncestor(el, 'unit');
 
             var outerWrap = el.parentElement.parentElement;
+            
             var textAreaValue = outerWrap.querySelector('textarea').value;
 
             if (textAreaValue) {

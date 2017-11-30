@@ -14,15 +14,17 @@ define([
             var that = this;
             require(["javascripts/createpost"], function (createPostWidget) {
                 var utilBase = new util(),
-                    commentReply = new commentReplyWidget(),
+                    commentReply = new commentReplyWidget({parentWidget: that.commentUnitNode}),
                     post1 = new createPostWidget();
-
+                //commentReply.parentWidget = parentWidget;
                 utilBase.set_targetId(post1.unit.getAttribute('data-id'));
                 utilBase.set_targetRepDiv(that.commentUnitNode);
-                var outerDiv = that.commentUnitNode
+                var outerDiv = that.commentUnitNode;
                 commentReply.placeAt(outerDiv);
+
             });
         },
+
         postCreate: function () {
             if (this.value) {
                 this.commentUnitNode.prepend(this.value);
