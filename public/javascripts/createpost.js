@@ -33,12 +33,34 @@ define([
 
         },
 
+
+        commentSaveBtnOnClicked: function () {
+            utilBase.set_commentVal(this.commentTextArea.value);
+
+            if (this.commentTextArea.value) {
+               
+                var commentUnit = new CommentUnit({value: this.commentTextArea.value, targetWidget: this.unit});
+
+
+
+                utilBase.set_unitId(commentUnit.commentUnitNode.getAttribute('data-id'));
+                utilBase.set_targetId(this.unit.getAttribute('data-id'));
+                utilBase.set_commentObj_comment(this.commentTextArea.value);
+                utilBase.set_commentObj_parrentid(this.unit.getAttribute('data-id'));
+
+                this.commentTextArea.value = '';
+                commentUnit.placeAt(this.allComment);
+                this.persistValueToDB('commentVal');
+            }
+        },
+
         persistValueToDB: function (chk) {
             if (!firebase.apps.length) {
                 firebase.initializeApp(config.config);
             }
 
             var database = firebase.database();
+            
 
             if (chk == 'count') {
                 database.ref('Post/' + utilBase.get_targetId()).update({
@@ -47,31 +69,12 @@ define([
             } else if (chk == 'commentVal') {
                 database.ref('Post/' + utilBase.get_targetId() + '/comments/' + utilBase.get_unitId()).update({
                     id: utilBase.get_unitId(),
-                    comment: utilBase.get_commentObj().comment
-                    //parentId: util.myUtil.commentObj.parrentid
+                    comment: utilBase.get_commentObj().comment,
+                    parentId: utilBase.get_commentObj().parrentid
                 });
             }
         },
 
-        commentSaveBtnOnClicked: function () {
-            utilBase.set_commentVal(this.commentTextArea.value);
-
-            if (this.commentTextArea.value) {
-               
-                var commentUnit = new CommentUnit({value: this.commentTextArea.value});
-
-
-
-                utilBase.set_unitId(commentUnit.commentUnitNode.getAttribute('data-id'));
-                utilBase.set_targetId(this.unit.getAttribute('data-id'));
-                utilBase.set_commentObj_comment(this.commentTextArea.value);
-                //utilBase.set_commentObj_parrentid(commentUnit.commentUnitNode.getAttribute('data-id'));
-
-                this.commentTextArea.value = '';
-                commentUnit.placeAt(this.allComment);
-                this.persistValueToDB('commentVal');
-            }
-        },
 
         postCreate: function () {
             var id = Date.now() + Math.round(Math.random());
