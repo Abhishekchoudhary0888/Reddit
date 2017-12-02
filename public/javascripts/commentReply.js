@@ -18,7 +18,7 @@ define([
             require(["javascripts/createCommentUnit"], function (CommentUnit) {
 
                 if (value) {
-                    var commentUnit = new CommentUnit({value: value});
+                    var commentUnit = new CommentUnit({value: value, targetWidget: that.targetUnitWidget});
                     commentUnit.placeAt(that.parentWidget);
                     that.domNode.remove();
 
