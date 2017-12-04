@@ -2,14 +2,15 @@ define([
     "dojo/_base/declare",
     "dijit/_WidgetBase",
     "dijit/_Templated",
-    "dojo/text!./template/topsection.ejs",
+    "dojo/text!./template/TopSection.ejs",
     "./util",
     "./firebaseDB",
-    "./createpost"
-], function (declare, _WidgetBase, _Templated, TopSectionTemplate, util, config, createPost) {
+    "./PostUnit",
+    "./CommentUnit"
+], function (declare, _WidgetBase, _Templated, TopSection, util, config, PostUnit, CommentUnit) {
 
     var redditWidget = declare([_WidgetBase, _Templated], {
-        templateString: TopSectionTemplate,
+        templateString: TopSection,
 
         postbtnClicked: function () {
             utilBase = new util();
@@ -19,7 +20,7 @@ define([
             utilBase.set_obj_voteCount(0);
 
             if (this.inputTitle.value) {
-                var post = new createPost();
+                var post = new PostUnit();
 
                 var domUnitPost = document.createElement('div');
                 post.placeAt(domUnitPost);
@@ -61,7 +62,7 @@ define([
 
                     for (var i = 0; i < storeObj.length; i++) {
 
-                        var post = new createPost(),
+                        var post = new PostUnit(),
                             domUnitPost = document.createElement('div');
 
                         post.placeAt(domUnitPost);
@@ -75,24 +76,29 @@ define([
 
                         that.unitWrap.append(domUnitPost); // Create post
 
-                        // For comments
-                        //if (storeObj[i].comments) {
-                        if (false) {
+                        if (storeObj[i].comments) {
                             var commentObj = Object.keys(storeObj[i].comments);
                             for (var j = 0; j < commentObj.length; j++) {
                                 var tempObj = storeObj[i].comments[commentObj[j]];
 
-                                var dom = document.querySelector('[id="' + tempObj.parentId + '"]');
+                                var dom = document.querySelector('[data-id="' + tempObj.parentId + '"]');
 
                                 if (dom.classList.contains('unit')) {
                                     var allComments = domUnitPost.querySelector('.all-comments');
-                                    var commentUnit = commentObject.mycomment.createCommentUnitFn(tempObj.comment);
-                                    commentUnit.id = tempObj.id;
-                                    allComments.appendChild(commentUnit);
+                                    var commentUnit = new CommentUnit({value: tempObj.comment});
+                                    //var commentUnit = commentObject.mycomment.createCommentUnitFn(tempObj.comment);
+                                    commentUnit.commentUnitNode.dataset.id= tempObj.id;
+                                    commentUnit.placeAt(allComments);
+                                    //commentUnit.id = tempObj.id;
+
+                                    //allComments.appendChild(commentUnit);
                                 } else if (dom.classList.contains('comment-unit')) {
-                                    var commentUnit = commentObject.mycomment.createCommentUnitFn(tempObj.comment);
-                                    commentUnit.id = tempObj.id;
-                                    dom.appendChild(commentUnit);
+                                    var commentUnit = new CommentUnit({value: tempObj.comment});
+                                    commentUnit.commentUnitNode.dataset.id= tempObj.id;
+                                    commentUnit.placeAt(dom);
+                                    //var commentUnit = commentObject.mycomment.createCommentUnitFn(tempObj.comment);
+                                    // commentUnit.id = tempObj.id;
+                                    // dom.appendChild(commentUnit);
                                 }
                             }
                         }

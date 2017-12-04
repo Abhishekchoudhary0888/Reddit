@@ -2,14 +2,14 @@ define([
     "dojo/_base/declare",
     "dijit/_WidgetBase",
     "dijit/_Templated",
-    "dojo/text!./template/postsection.ejs",
+    "dojo/text!./template/PostUnit.ejs",
     "./util",
-    "./createCommentUnit"
+    "./CommentUnit"
 
-], function (declare, _WidgetBase, _Templated, postSectionTemplate, util, CommentUnit) {
+], function (declare, _WidgetBase, _Templated, PostUnit, util, CommentUnit) {
 
     return declare([_WidgetBase, _Templated], {
-        templateString: postSectionTemplate,
+        templateString: PostUnit,
 
         upVoteClicked: function () {
             this.updateVote(1);
@@ -40,8 +40,6 @@ define([
             if (this.commentTextArea.value) {
                
                 var commentUnit = new CommentUnit({value: this.commentTextArea.value, targetWidget: this.unit});
-
-
 
                 utilBase.set_unitId(commentUnit.commentUnitNode.getAttribute('data-id'));
                 utilBase.set_targetId(this.unit.getAttribute('data-id'));

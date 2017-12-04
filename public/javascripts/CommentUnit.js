@@ -2,22 +2,22 @@ define([
     "dojo/_base/declare",
     "dijit/_WidgetBase",
     "dijit/_Templated",
-    "dojo/text!./template/commentUnit.ejs",
-    "./commentReply",
+    "dojo/text!./template/CommentUnit.ejs",
+    "./CommentReply",
     "./util"
-], function (declare, _WidgetBase, _Templated, commentUnitTemplate, commentReplyWidget, util) {
+], function (declare, _WidgetBase, _Templated, CommentUnit, CommentReply, util) {
 
     return declare([_WidgetBase, _Templated], {
-        templateString: commentUnitTemplate,
+        templateString: CommentUnit,
 
 
         commentReplyClicked: function () {
             var that = this;
-            require(["javascripts/createpost"], function (createPostWidget) {
+            require(["javascripts/PostUnit"], function (PostUnit) {
                 var utilBase = new util(),
-                    commentReply = new commentReplyWidget({parentWidget: that.commentUnitNode, targetUnitWidget: that.targetWidget}),
-                    post1 = new createPostWidget();
-                utilBase.set_targetId(post1.unit.getAttribute('data-id'));
+                    commentReply = new CommentReply({parentWidget: that.commentUnitNode, targetUnitWidget: that.targetWidget}),
+                    post = new PostUnit();
+                utilBase.set_targetId(post.unit.getAttribute('data-id'));
                 utilBase.set_targetRepDiv(that.commentUnitNode);
                 commentReply.placeAt(that.commentUnitNode);
             });

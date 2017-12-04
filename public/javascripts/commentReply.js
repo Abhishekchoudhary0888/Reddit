@@ -2,20 +2,20 @@ define([
     "dojo/_base/declare",
     "dijit/_WidgetBase",
     "dijit/_Templated",
-    "dojo/text!./template/replyCommentBlock.ejs",
+    "dojo/text!./template/CommentReply.ejs",
     "./util"
-], function (declare, _WidgetBase, _Templated, replyCommentTemplate, util) {
+], function (declare, _WidgetBase, _Templated, CommentReply, util) {
 
 
     return declare([_WidgetBase, _Templated], {
-        templateString: replyCommentTemplate,
+        templateString: CommentReply,
 
         replyCommentSaveBtnClicked: function () {
 
             var that = this;
             var value = this.replyTextareaBox.value;
 
-            require(["javascripts/createCommentUnit"], function (CommentUnit) {
+            require(["javascripts/CommentUnit"], function (CommentUnit) {
 
                 if (value) {
                     var commentUnit = new CommentUnit({value: value, targetWidget: that.targetUnitWidget});
